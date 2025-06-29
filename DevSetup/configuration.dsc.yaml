@@ -1,6 +1,11 @@
-# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
 # DEC (Desired Environment Configuration) - winget configure file
 # This configuration handles application installations and Windows settings
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC Windows Configuration"
+  description: "Desired Environment Configuration for Windows development setup"
 
 properties:
   configurationVersion: 0.2.0
@@ -13,11 +18,40 @@ properties:
         MinVersion: "10.0.19041"
   resources:
     # ====================================
+    # INSTALL MICROSOFT.WINDOWS.SETTINGS MODULE
+    # ====================================
+    - resource: Microsoft.DSC.Transitional/RunCommandOnSet
+      directives:
+        description: Install Microsoft.Windows.Settings PowerShell module
+        allowPrerelease: true
+      settings:
+        executable: pwsh
+        arguments:
+          - "-NoProfile"
+          - "-NoLogo"
+          - "-Command"
+          - "if (-not (Get-Module -ListAvailable -Name Microsoft.Windows.Settings)) { Install-Module -Name Microsoft.Windows.Settings -Confirm:$False -Force -AllowPrerelease -AllowClobber }"
+
+    # ====================================
+    # WINDOWS SETTINGS CONFIGURATION
+    # ====================================
+    - resource: Microsoft.Windows.Settings/WindowsSettings
+      directives:
+        description: Configure Windows UI and Developer settings
+        allowPrerelease: true
+      settings:
+        SystemColorMode: Dark
+        AppColorMode: Dark
+        DeveloperMode: true
+        TaskbarAlignment: Left
+
+    # ====================================
     # CORE DEVELOPMENT TOOLS
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Git version control system
+        description: Install Git version control system (Git.Git)
+        module: Git.Git
         allowPrerelease: true
       settings:
         id: Git.Git
@@ -25,7 +59,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Microsoft Visual Studio Code
+        description: Install Microsoft Visual Studio Code (Microsoft.VisualStudioCode)
+        module: Microsoft.VisualStudioCode
         allowPrerelease: true
       settings:
         id: Microsoft.VisualStudioCode
@@ -33,7 +68,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install PowerShell 7
+        description: Install PowerShell 7 (Microsoft.PowerShell)
+        module: Microsoft.PowerShell
         allowPrerelease: true
       settings:
         id: Microsoft.PowerShell
@@ -41,23 +77,26 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Windows Terminal
+        description: Install Windows Terminal (Microsoft.WindowsTerminal)
+        module: Microsoft.WindowsTerminal
         allowPrerelease: true
       settings:
         id: Microsoft.WindowsTerminal
         source: winget
 
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Docker Desktop
-        allowPrerelease: true
-      settings:
-        id: Docker.DockerDesktop
-        source: winget
+    # - resource: Microsoft.WinGet.DSC/WinGetPackage
+    #   directives:
+    #     description: Install Docker Desktop (Docker.DockerDesktop)
+    #     module: Docker.DockerDesktop
+    #     allowPrerelease: true
+    #   settings:
+    #     id: Docker.DockerDesktop
+    #     source: winget
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Vim text editor
+        description: Install Vim text editor (vim.vim)
+        module: vim.vim
         allowPrerelease: true
       settings:
         id: vim.vim
@@ -65,7 +104,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Neovim
+        description: Install Neovim (Neovim.Neovim)
+        module: Neovim.Neovim
         allowPrerelease: true
       settings:
         id: Neovim.Neovim
@@ -76,7 +116,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install NVM for Windows
+        description: Install NVM for Windows (CoreyButler.NVMforWindows)
+        module: CoreyButler.NVMforWindows
         allowPrerelease: true
       settings:
         id: CoreyButler.NVMforWindows
@@ -84,7 +125,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install pnpm package manager
+        description: Install pnpm package manager (pnpm.pnpm)
+        module: pnpm.pnpm
         allowPrerelease: true
       settings:
         id: pnpm.pnpm
@@ -95,7 +137,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Google Chrome
+        description: Install Google Chrome (Google.Chrome)
+        module: Google.Chrome
         allowPrerelease: true
       settings:
         id: Google.Chrome
@@ -103,7 +146,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Google Chrome Dev
+        description: Install Google Chrome Dev (Google.Chrome.Dev)
+        module: Google.Chrome.Dev
         allowPrerelease: true
       settings:
         id: Google.Chrome.Dev
@@ -111,7 +155,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Firefox Developer Edition
+        description: Install Firefox Developer Edition (Mozilla.Firefox.DeveloperEdition)
+        module: Mozilla.Firefox.DeveloperEdition
         allowPrerelease: true
       settings:
         id: Mozilla.Firefox.DeveloperEdition
@@ -122,7 +167,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install 7-Zip
+        description: Install 7-Zip (7zip.7zip)
+        module: 7zip.7zip
         allowPrerelease: true
       settings:
         id: 7zip.7zip
@@ -130,7 +176,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Notepad++
+        description: Install Notepad++ (Notepad++.Notepad++)
+        module: Notepad++.Notepad++
         allowPrerelease: true
       settings:
         id: Notepad++.Notepad++
@@ -138,7 +185,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Grammarly for Windows
+        description: Install Grammarly for Windows (Grammarly.ForWindows)
+        module: Grammarly.ForWindows
         allowPrerelease: true
       settings:
         id: Grammarly.ForWindows
@@ -146,7 +194,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Obsidian
+        description: Install Obsidian (Obsidian.Obsidian)
+        module: Obsidian.Obsidian
         allowPrerelease: true
       settings:
         id: Obsidian.Obsidian
@@ -154,7 +203,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Microsoft Sticky Notes
+        description: Install Microsoft Sticky Notes (Microsoft.StickyNotes)
+        module: Microsoft.StickyNotes
         allowPrerelease: true
       settings:
         id: Microsoft.StickyNotes
@@ -162,7 +212,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install draw.io Diagrams
+        description: Install draw.io Diagrams (JGraph.Draw)
+        module: JGraph.Draw
         allowPrerelease: true
       settings:
         id: JGraph.Draw
@@ -173,7 +224,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Azure Data Studio
+        description: Install Azure Data Studio (Microsoft.AzureDataStudio)
+        module: Microsoft.AzureDataStudio
         allowPrerelease: true
       settings:
         id: Microsoft.AzureDataStudio
@@ -181,7 +233,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Dev Home Azure Extension
+        description: Install Dev Home Azure Extension (Microsoft.DevHomeAzureExtension)
+        module: Microsoft.DevHomeAzureExtension
         allowPrerelease: true
       settings:
         id: Microsoft.DevHomeAzureExtension
@@ -192,7 +245,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install GitHub Desktop
+        description: Install GitHub Desktop (GitHub.GitHubDesktop)
+        module: GitHub.GitHubDesktop
         allowPrerelease: true
       settings:
         id: GitHub.GitHubDesktop
@@ -200,7 +254,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install GitHub CLI
+        description: Install GitHub CLI (GitHub.cli)
+        module: GitHub.cli
         allowPrerelease: true
       settings:
         id: GitHub.cli
@@ -208,7 +263,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Dev Home GitHub Extension
+        description: Install Dev Home GitHub Extension (Microsoft.DevHomeGitHubExtension)
+        module: Microsoft.DevHomeGitHubExtension
         allowPrerelease: true
       settings:
         id: Microsoft.DevHomeGitHubExtension
@@ -219,7 +275,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install PowerToys
+        description: Install PowerToys (Microsoft.PowerToys)
+        module: Microsoft.PowerToys
         allowPrerelease: true
       settings:
         id: Microsoft.PowerToys
@@ -227,7 +284,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install DevToys
+        description: Install DevToys (DevToys-app.DevToys)
+        module: DevToys-app.DevToys
         allowPrerelease: true
       settings:
         id: DevToys-app.DevToys
@@ -235,7 +293,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Windows Performance Analyzer
+        description: Install Windows Performance Analyzer (Microsoft.WindowsPerformanceAnalyzer)
+        module: Microsoft.WindowsPerformanceAnalyzer
         allowPrerelease: true
       settings:
         id: Microsoft.WindowsPerformanceAnalyzer
@@ -243,7 +302,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Sysinternals Suite
+        description: Install Sysinternals Suite (Microsoft.Sysinternals)
+        module: Microsoft.Sysinternals
         allowPrerelease: true
       settings:
         id: Microsoft.Sysinternals
@@ -254,7 +314,8 @@ properties:
     # ====================================
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Oh My Posh
+        description: Install Oh My Posh (JanDeDobbeleer.OhMyPosh)
+        module: JanDeDobbeleer.OhMyPosh
         allowPrerelease: true
       settings:
         id: JanDeDobbeleer.OhMyPosh
@@ -262,7 +323,8 @@ properties:
 
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Warp terminal
+        description: Install Warp terminal (Warp.Warp)
+        module: Warp.Warp
         allowPrerelease: true
       settings:
         id: Warp.Warp
@@ -277,31 +339,3 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
-
-    - resource: Microsoft.Windows.Settings/SystemColorMode
-      directives:
-        description: Set system color mode to dark
-        allowPrerelease: true
-      settings:
-        SystemColorMode: dark
-
-    - resource: Microsoft.Windows.Settings/AppColorMode
-      directives:
-        description: Set application color mode to dark
-        allowPrerelease: true
-      settings:
-        AppColorMode: dark
-
-    - resource: Microsoft.Windows.Settings/TaskbarAlignment
-      directives:
-        description: Set taskbar alignment to left
-        allowPrerelease: true
-      settings:
-        Alignment: left
-
-    - resource: Microsoft.Windows.Settings/TaskbarAutomaticallyHide
-      directives:
-        description: Configure taskbar auto-hide
-        allowPrerelease: true
-      settings:
-        Hide: false
