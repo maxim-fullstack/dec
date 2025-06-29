@@ -36,6 +36,7 @@ resources:
   # INSTALL MICROSOFT.WINDOWS.SETTINGS MODULE
   # ====================================
   - name: WindowsSettingsModuleInstaller
+    id: WindowsSettingsModuleInstaller
     type: Microsoft.DSC.Transitional/RunCommandOnSet
     metadata:
       description: "Install Microsoft.Windows.Settings PowerShell module"
