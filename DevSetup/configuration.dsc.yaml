@@ -58,7 +58,7 @@ resources:
       winget:
         securityContext: "elevated"
     dependsOn:
-      - "[resourceId('Microsoft.DSC.Transitional/RunCommandOnSet', 'WindowsSettingsModuleInstaller')]"
+      - WindowsSettingsModuleInstaller
     properties:
       SystemColorMode: "Dark"
       AppColorMode: "Dark"
