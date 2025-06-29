@@ -91,16 +91,18 @@ function Invoke-WingetConfiguration {
     
     try {
         Write-LogMessage "Executing: winget configure --file $configPath" "INFO"
-        $result = winget configure --file $configPath 2>&1
+        Write-LogMessage "Note: winget may require user interaction - please respond to any prompts" "INFO"
+        
+        # Run winget interactively without capturing output
+        # This allows user interaction and shows real-time progress
+        winget configure --file $configPath
         
         if ($LASTEXITCODE -eq 0) {
             Write-LogMessage "✓ winget configuration completed successfully" "INFO"
-            Write-LogMessage "winget output: $result" "DEBUG"
         }
         else {
             Write-LogMessage "winget configuration failed with exit code: $LASTEXITCODE" "ERROR"
-            Write-LogMessage "winget output: $result" "ERROR"
-            throw "winget configuration failed"
+            throw "winget configuration failed. Exit code: $LASTEXITCODE"
         }
     }
     catch {
