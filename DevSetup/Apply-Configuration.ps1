@@ -15,8 +15,7 @@
 [CmdletBinding()]
 param(
     [switch]$SkipWinget,
-    [switch]$SkipDSC,
-    [switch]$Verbose
+    [switch]$SkipDSC
 )
 
 # Set error action preference

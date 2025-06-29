@@ -67,7 +67,7 @@ DevSetup/
 # Skip PowerShell DSC (custom config only)
 .\Apply-Configuration.ps1 -SkipDSC
 
-# Verbose output
+# Verbose output (shows detailed information)
 .\Apply-Configuration.ps1 -Verbose
 ```
 
