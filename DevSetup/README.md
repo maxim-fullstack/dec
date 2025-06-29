@@ -1,327 +1,169 @@
-# DEC DevSetup - Hybrid Configuration Project
+# DEC Configuration System - Refactored Architecture
 
-DEC (Desired Environment Configuration) DevSetup is a hybrid configuration project that combines the power of `winget configure` for modern package management with traditional PowerShell DSC for custom, complex tasks.
+## Overview
 
-## 🚀 Quick Start
+The DEC (Desired Environment Configuration) system has been refactored to follow Clean Architecture and Clean Code principles, improving maintainability, testability, and adherence to Single Responsibility Principle.
 
-**Prerequisites:**
-- Windows 10/11 with Administrator privileges
-- Windows Package Manager (winget) installed
-- PowerShell 5.1 or PowerShell 7+
+## Architecture Changes
 
-**One-Command Setup:**
-```powershell
-# Run this single command as Administrator to configure your entire development environment
-.\Apply-Configuration.ps1
-```
+### Before Refactoring
+- Single monolithic script (~708 lines)
+- Mixed concerns in single functions
+- Hardcoded constants throughout the code
+- Tightly coupled logging and business logic
 
-## 📁 Project Structure
+### After Refactoring
+- Modular architecture with separated concerns
+- Each module has a single responsibility
+- Centralized constants management
+- Loosely coupled components
+- Main script is now just 49 lines (entry point only)
+
+## Module Structure
 
 ```
 DevSetup/
-├── Apply-Configuration.ps1      # 🎯 Main orchestrator script (run this!)
-├── configuration.dsc.yaml      # 📦 winget configure file
-├── DscCustom/                   # 🔧 PowerShell DSC components
-│   ├── CustomConfiguration.ps1 # 🛠️ DSC configuration script
-│   └── ConfigurationData.psd1   # 📋 Configuration data and settings
-└── README.md                    # 📖 This file
+├── Apply-Configuration.ps1          # Main entry point (49 lines)
+├── Modules/
+│   ├── Constants.psm1              # Application constants
+│   ├── Logging.psm1                # Centralized logging system
+│   ├── Prerequisites.psm1          # Prerequisite validation
+│   ├── WingetConfiguration.psm1    # Winget configuration logic
+│   ├── DSCConfiguration.psm1       # PowerShell DSC logic
+│   └── ConfigurationOrchestrator.psm1  # Main orchestration logic
+└── README-Refactored.md             # This documentation
 ```
 
-## 🎯 What Gets Configured
+## Module Responsibilities
 
-### Stage 1: Applications & Windows Settings (winget)
-- **Core Development:** Git, Visual Studio Code, PowerShell 7, Windows Terminal, Docker, Vim, Neovim
-- **Node.js & JavaScript:** NVM for Windows, pnpm package manager
-- **Browsers:** Google Chrome, Google Chrome Dev, Firefox Developer Edition
-- **Productivity:** 7-Zip, Notepad++, Grammarly, Obsidian, Microsoft Sticky Notes, draw.io
-- **Azure & Cloud:** Azure Data Studio, Dev Home Azure Extension
-- **GitHub & Version Control:** GitHub Desktop, GitHub CLI, Dev Home GitHub Extension
-- **System Utilities:** PowerToys, DevToys, Sysinternals Suite, Windows Performance Analyzer
-- **Terminal Enhancement:** Oh My Posh, Warp terminal
-- **Windows Settings:** Dark mode, Developer mode, Taskbar alignment
+### Constants.psm1
+- Centralized definition of all application constants
+- Exported variables available to all modules
+- Read-only constants prevent accidental modification
 
-### Stage 2: Custom Configuration (PowerShell DSC)
-- **Directory Structure:** Creates organized development folders (`C:\Dev\Projects`, `C:\Dev\Tools`, `C:\Dev\Scripts`, `C:\Dev\Installers`, `C:\Dev\Temp`)
-- **PowerShell Profile:** Custom aliases, functions, and prompt with Git integration
-- **Git Configuration:** Global git settings with useful aliases
-- **Environment Variables:** Development-focused environment setup (DEV_PATH, EDITOR, GIT_EDITOR)
-- **Desktop Shortcuts:** Quick access to development tools and folders (Dev Folder, VS Code, Windows Terminal)
-- **Registry Settings:** Show file extensions, hidden files, and system files
-- **Windows Features:** Enables WSL (Linux Subsystem)
-- **Custom Apps:** Framework for installing local EXE/MSI packages
-- **Data-Driven Configuration:** Structured configuration via ConfigurationData.psd1
+### Logging.psm1
+- Structured logging with console and file output
+- Configurable log levels (DEBUG, INFO, WARN, ERROR)
+- Color-coded console output
+- Thread-safe file logging
 
-## 🛠️ Usage Options
+### Prerequisites.psm1
+- Administrator privilege validation
+- Winget availability checking
+- DSC module installation and verification
+- Required module imports
 
-### Standard Usage
+### WingetConfiguration.psm1
+- Winget configuration file validation
+- Winget command execution
+- Error handling for winget operations
+
+### DSCConfiguration.psm1
+- PowerShell DSC script loading
+- Configuration compilation
+- DSC configuration application
+- Output directory management
+
+### ConfigurationOrchestrator.psm1
+- Main process orchestration
+- Phase coordination
+- Summary reporting
+- Error handling coordination
+
+## Benefits of Refactoring
+
+### 1. **Single Responsibility Principle**
+- Each module has one clear purpose
+- Functions do only one thing
+- Easier to understand and maintain
+
+### 2. **Improved Error Handling**
+- Consistent error handling across all modules
+- Better error messages with context
+- Centralized error logging
+
+### 3. **Enhanced Testability**
+- Each module can be tested independently
+- Functions are focused and have clear inputs/outputs
+- Easier to mock dependencies
+
+### 4. **Better Maintainability**
+- Changes to one area don't affect others
+- Easier to add new features
+- Clear separation of concerns
+
+### 5. **Reusability**
+- Modules can be reused in other scripts
+- Common functionality centralized
+- Consistent patterns across modules
+
+## Usage
+
+The refactored system maintains the same external interface:
+
 ```powershell
 # Run complete configuration
 .\Apply-Configuration.ps1
-```
 
-### Advanced Options
-```powershell
-# Skip winget configuration (applications only)
+# Skip winget phase
 .\Apply-Configuration.ps1 -SkipWinget
 
-# Skip PowerShell DSC (custom config only)
+# Skip DSC phase
 .\Apply-Configuration.ps1 -SkipDSC
 
-# Verbose output (shows detailed information)
-.\Apply-Configuration.ps1 -Verbose
+# Enable debug logging
+.\Apply-Configuration.ps1 -LogLevel DEBUG
 ```
 
-## 📋 Detailed Configuration
+## Code Quality Improvements
 
-### Complete Applications List
+### 1. **Approved PowerShell Verbs**
+- All functions use approved PowerShell verbs
+- Consistent naming conventions
+- Better PowerShell integration
 
-**Core Development Tools:**
-- Git (version control)
-- Microsoft Visual Studio Code (code editor)
-- PowerShell 7 (advanced shell)
-- Windows Terminal (modern terminal)
-- Docker Desktop (containerization)
-- Vim (text editor)
-- Neovim (modern Vim)
+### 2. **Proper Parameter Handling**
+- `[CmdletBinding()]` attributes on all functions
+- Proper parameter validation
+- Clear parameter documentation
 
-**Node.js & JavaScript:**
-- NVM for Windows (Node version manager)
-- pnpm (fast package manager)
+### 3. **Comment-Based Help**
+- Complete `.SYNOPSIS` for all functions
+- Parameter descriptions
+- Usage examples where appropriate
 
-**Browsers & Web Development:**
-- Google Chrome (primary browser)
-- Google Chrome Dev (development browser)
-- Firefox Developer Edition (web development)
+### 4. **Error Handling**
+- Try/catch blocks where appropriate
+- Meaningful error messages
+- Proper exception propagation
 
-**Productivity & Office:**
-- 7-Zip (file archiving)
-- Notepad++ (text editor)
-- Grammarly for Windows (writing assistant)
-- Obsidian (note-taking)
-- Microsoft Sticky Notes (quick notes)
-- draw.io Diagrams (diagramming tool)
+## Migration Notes
 
-**Azure & Cloud Development:**
-- Azure Data Studio (database management)
-- Dev Home Azure Extension (Azure integration)
+- The original script functionality is preserved
+- All command-line parameters work the same way
+- Log file format and location unchanged
+- No breaking changes to the user interface
 
-**GitHub & Version Control:**
-- GitHub Desktop (Git GUI)
-- GitHub CLI (command-line interface)
-- Dev Home GitHub Extension (GitHub integration)
+## Future Enhancements
 
-**System Utilities & Tools:**
-- PowerToys (Windows utilities)
-- DevToys (developer utilities)
-- Sysinternals Suite (system tools)
-- Windows Performance Analyzer (performance analysis)
+The modular structure enables easy future enhancements:
 
-**Terminal & Shell Enhancement:**
-- Oh My Posh (prompt theming)
-- Warp (modern terminal)
+1. **Unit Testing**: Each module can have its own test suite
+2. **Configuration Validation**: Add schema validation for configuration files
+3. **Plugin System**: New configuration types can be added as modules
+4. **Progress Reporting**: Enhanced progress tracking across phases
+5. **Rollback Capability**: Easier to implement undo functionality
 
-### Applications Installed via winget
+## Development Guidelines
 
-| Category | Applications |
-|----------|-------------|
-| **Core Development** | Git, Visual Studio Code, PowerShell 7, Windows Terminal, Docker Desktop, Vim, Neovim |
-| **Node.js & JavaScript** | NVM for Windows, pnpm |
-| **Browsers & Web Dev** | Google Chrome, Google Chrome Dev, Firefox Developer Edition |
-| **Productivity & Office** | 7-Zip, Notepad++, Grammarly for Windows, Obsidian, Microsoft Sticky Notes, draw.io Diagrams |
-| **Azure & Cloud** | Azure Data Studio, Dev Home Azure Extension |
-| **GitHub & Version Control** | GitHub Desktop, GitHub CLI, Dev Home GitHub Extension |
-| **System Utilities** | PowerToys, DevToys, Sysinternals Suite, Windows Performance Analyzer |
-| **Terminal Enhancement** | Oh My Posh, Warp terminal |
+When modifying or extending the system:
 
-### Custom PowerShell Profile Features
+1. Follow the existing module pattern
+2. Maintain single responsibility for each function
+3. Use approved PowerShell verbs
+4. Include comment-based help for all public functions
+5. Handle errors consistently
+6. Log important operations and errors
+7. Test modules independently
 
-#### Aliases
-- `ll`, `la` → `Get-ChildItem` (list files)
-- `grep` → `Select-String` (search text)
-- `touch` → `New-Item` (create files)
-- `which` → `Get-Command` (find commands)
-
-#### Functions
-- `cd-dev` → Navigate to `C:\Dev`
-- `cd-projects` → Navigate to `C:\Dev\Projects`
-- `gs` → `git status`
-- `ga` → `git add .`
-- `gc "message"` → `git commit -m "message"`
-
-#### Enhanced Prompt
-- Shows current directory
-- Displays git branch when in a repository  
-- Clean, informative format
-
-#### Environment Variables
-- `DEV_PATH` → Points to `C:\Dev` (machine-level)
-- `EDITOR` → Set to `code` (user-level)
-- `GIT_EDITOR` → Set to `code --wait` (user-level)
-
-#### Desktop Shortcuts Created
-- **Dev Folder** → Quick access to `C:\Dev`
-- **Visual Studio Code** → Direct launch of VS Code
-- **Windows Terminal** → Quick access to modern terminal
-
-### Directory Structure Created
-```
-C:\Dev/
-├── Projects/     # Active development projects
-├── Tools/        # Development tools and utilities
-├── Scripts/      # Utility scripts and automation
-├── Installers/   # Local application installers
-└── Temp/         # Temporary development files
-```
-
-## 🔧 Customization
-
-### Adding Applications
-Edit `configuration.dsc.yaml` to add more winget packages:
-```yaml
-- resource: Microsoft.WinGet.DSC/WinGetPackage
-  directives:
-    description: Install Your App
-    allowPrerelease: true
-  settings:
-    id: Publisher.AppName
-    source: winget
-```
-
-### Configuration Data Structure
-The project uses a structured approach with `ConfigurationData.psd1` containing:
-
-- **PowerShell Aliases**: Customize command shortcuts
-- **Git Aliases**: Configure git command shortcuts  
-- **Environment Variables**: Set system and user environment variables
-- **Directory Structure**: Define folders to create
-- **Desktop Shortcuts**: Specify desktop shortcuts to create
-- **Registry Settings**: Configure Windows registry settings
-- **Windows Features**: List Windows features to enable
-- **Custom Applications**: Define local installers to run
-
-### Modifying Configuration Data
-Edit `DscCustom\ConfigurationData.psd1` to customize:
-
-```powershell
-# Add new PowerShell aliases
-PowerShellAliases = @(
-    @{
-        Name        = 'your-alias'
-        Command     = 'Your-Command'
-        Description = 'Description of your alias'
-    }
-)
-
-# Add environment variables
-EnvironmentVariables = @(
-    @{
-        Name        = 'YOUR_VAR'
-        Value       = 'YourValue'
-        Target      = 'User'  # or 'Machine'
-        Description = 'Your custom environment variable'
-    }
-)
-```
-
-### Custom Local Installers
-1. Place your `.msi` or `.exe` files in `C:\Dev\Tools\Installers\`
-2. Edit `DscCustom\ConfigurationData.psd1` to add your applications:
-```powershell
-CustomApplications = @(
-    @{
-        Name          = 'YourApp'
-        InstallerPath = 'C:\Dev\Tools\Installers\YourApp.msi'
-        InstallerType = 'MSI'
-        CheckPath     = 'C:\Program Files\YourApp\YourApp.exe'
-        Description   = 'Your custom application'
-        Enabled       = $true
-    }
-)
-```
-
-Alternatively, you can modify the `CustomApplications` Script resource directly in `DscCustom\CustomConfiguration.ps1`:
-
-```powershell
-SetScript = {
-    $installerPath = "C:\Dev\Tools\Installers\YourApp.msi"
-    if (Test-Path $installerPath) {
-        Start-Process -FilePath "msiexec.exe" -ArgumentList "/i", $installerPath, "/quiet" -Wait
-        Write-Verbose "Installed YourApp from local installer"
-    }
-}
-```
-
-### Modifying PowerShell Profile
-Edit the profile content in `DscCustom\CustomConfiguration.ps1` under the `PowerShellProfile` script resource.
-
-## 📊 Logging & Troubleshooting
-
-### Log File
-All operations are logged to `configuration.log` in the script directory.
-
-### Common Issues
-
-**"winget is not available"**
-- Install App Installer from Microsoft Store
-- Update Windows to latest version
-
-**"Must be run as Administrator"**
-- Right-click PowerShell and select "Run as Administrator"
-- Or use `Start-Process PowerShell -Verb RunAs`
-
-**DSC Module Issues**
-- The script automatically installs `PSDscResources` module
-- Ensure you have internet connectivity
-
-### Manual Steps
-If automated configuration fails, you can run components individually:
-
-```powershell
-# Run only winget configuration
-winget configure --file .\configuration.dsc.yaml
-
-# Run only DSC configuration
-cd DscCustom
-. .\CustomConfiguration.ps1
-CustomConfiguration -OutputPath .\Output
-Start-DscConfiguration -Path .\Output -Wait -Verbose
-```
-
-## 🎨 Windows Settings Applied
-
-- **Theme:** Dark mode for system and applications
-- **Taskbar:** Left-aligned, always visible
-- **Developer Mode:** Enabled
-- **File Explorer:** Show file extensions, hidden files, and system files
-- **Features:** Windows Subsystem for Linux (WSL) enabled
-
-## 🔄 Running Again
-
-The configuration is designed to be idempotent - you can run it multiple times safely. It will:
-- Skip already installed applications
-- Update existing configurations
-- Not duplicate settings
-
-## 🤝 Contributing
-
-To extend this configuration:
-
-1. **For new applications:** Add to `configuration.dsc.yaml`
-2. **For custom settings:** Modify `DscCustom\CustomConfiguration.ps1`
-3. **For data-driven config:** Update `DscCustom\ConfigurationData.psd1`
-
-## 📝 License
-
-This project follows the same license as the parent DEC project (MIT License).
-
-## 🆘 Support
-
-- Check the `configuration.log` file for detailed operation logs
-- Review Windows Event Logs for DSC-related issues
-- Ensure all prerequisites are met before running
-
----
-
-**Happy Coding! 🚀**
-
-*This configuration sets up a comprehensive development environment in minutes, not hours.*
+This refactored architecture provides a solid foundation for future development while maintaining the existing functionality and user experience.
