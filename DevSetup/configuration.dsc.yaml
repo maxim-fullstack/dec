@@ -14,12 +14,12 @@ resources:
   # ====================================
   # WINGET CONFIGURATION
   # ====================================
-  - name: WinGet UserSettingsFile
+  - name: WinGetUserSettingsFile
     type: Microsoft.WinGet/UserSettingsFile
     properties:
       settings: {}
 
-  - name: WinGet AdminSettings
+  - name: WinGetAdminSettings
     type: Microsoft.WinGet/AdminSettings
     metadata:
       winget:
@@ -50,7 +50,7 @@ resources:
   # ====================================
   # WINDOWS SETTINGS CONFIGURATION
   # ====================================
-  - name: Configure Windows Settings
+  - name: ConfigureWindowsSettings
     type: Microsoft.Windows.Settings/WindowsSettings
     metadata:
       description: "Configure Windows UI and Developer settings"
@@ -67,7 +67,7 @@ resources:
   # ====================================
   # CORE DEVELOPMENT TOOLS
   # ====================================
-  - name: Install Git
+  - name: InstallGit
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Git.Git"
@@ -75,7 +75,7 @@ resources:
       id: "Git.Git"
       source: "winget"
 
-  - name: Install Visual Studio Code
+  - name: InstallVisualStudioCode
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.VisualStudioCode"
@@ -83,7 +83,7 @@ resources:
       id: "Microsoft.VisualStudioCode"
       source: "winget"
 
-  - name: Install PowerShell
+  - name: InstallPowerShell
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.PowerShell"
@@ -91,7 +91,7 @@ resources:
       id: "Microsoft.PowerShell"
       source: "winget"
 
-  - name: Install Windows Terminal
+  - name: InstallWindowsTerminal
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.WindowsTerminal"
@@ -107,7 +107,7 @@ resources:
   #     id: "Docker.DockerDesktop"
   #     source: "winget"
 
-  - name: Install Vim
+  - name: InstallVim
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install vim.vim"
@@ -115,7 +115,7 @@ resources:
       id: "vim.vim"
       source: "winget"
 
-  - name: Install Neovim
+  - name: InstallNeovim
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Neovim.Neovim"
@@ -126,7 +126,7 @@ resources:
   # ====================================
   # NODE.JS & JAVASCRIPT TOOLS
   # ====================================
-  - name: Install NVM for Windows
+  - name: InstallNVMforWindows
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install CoreyButler.NVMforWindows"
@@ -134,7 +134,7 @@ resources:
       id: "CoreyButler.NVMforWindows"
       source: "winget"
 
-  - name: Install pnpm
+  - name: InstallPnpm
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install pnpm.pnpm"
@@ -145,7 +145,7 @@ resources:
   # ====================================
   # BROWSERS & WEB DEVELOPMENT
   # ====================================
-  - name: Install Google Chrome
+  - name: InstallGoogleChrome
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Google.Chrome"
@@ -153,7 +153,7 @@ resources:
       id: "Google.Chrome"
       source: "winget"
 
-  - name: Install Google Chrome Dev
+  - name: InstallGoogleChromeDev
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Google.Chrome.Dev"
@@ -161,7 +161,7 @@ resources:
       id: "Google.Chrome.Dev"
       source: "winget"
 
-  - name: Install Firefox Developer Edition
+  - name: InstallFirefoxDeveloperEdition
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Mozilla.Firefox.DeveloperEdition"
@@ -172,7 +172,7 @@ resources:
   # ====================================
   # PRODUCTIVITY & OFFICE TOOLS
   # ====================================
-  - name: Install 7Zip
+  - name: Install7Zip
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install 7zip.7zip"
@@ -180,7 +180,7 @@ resources:
       id: "7zip.7zip"
       source: "winget"
 
-  - name: Install Notepad Plus Plus
+  - name: InstallNotepadPlusPlus
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Notepad++.Notepad++"
@@ -188,7 +188,7 @@ resources:
       id: "Notepad++.Notepad++"
       source: "winget"
 
-  - name: Install Grammarly for Windows
+  - name: InstallGrammarlyForWindows
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Grammarly.ForWindows"
@@ -196,7 +196,7 @@ resources:
       id: "Grammarly.ForWindows"
       source: "winget"
 
-  - name: Install Obsidian
+  - name: InstallObsidian
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Obsidian.Obsidian"
@@ -204,7 +204,7 @@ resources:
       id: "Obsidian.Obsidian"
       source: "winget"
 
-  - name: Install Microsoft Sticky Notes
+  - name: InstallMicrosoftStickyNotes
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.StickyNotes"
@@ -212,7 +212,7 @@ resources:
       id: "Microsoft.StickyNotes"
       source: "winget"
 
-  - name: Install Draw IO
+  - name: InstallDrawIO
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install JGraph.Draw"
@@ -223,7 +223,7 @@ resources:
   # ====================================
   # AZURE & CLOUD DEVELOPMENT
   # ====================================
-  - name: Install Azure Data Studio
+  - name: InstallAzureDataStudio
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.AzureDataStudio"
@@ -231,7 +231,7 @@ resources:
       id: "Microsoft.AzureDataStudio"
       source: "winget"
 
-  - name: Install Dev Home Azure Extension
+  - name: InstallDevHomeAzureExtension
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.DevHomeAzureExtension"
@@ -242,7 +242,7 @@ resources:
   # ====================================
   # GITHUB & VERSION CONTROL
   # ====================================
-  - name: Install GitHub Desktop
+  - name: InstallGitHubDesktop
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install GitHub.GitHubDesktop"
@@ -250,7 +250,7 @@ resources:
       id: "GitHub.GitHubDesktop"
       source: "winget"
 
-  - name: Install GitHub CLI
+  - name: InstallGitHubCLI
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install GitHub.cli"
@@ -258,7 +258,7 @@ resources:
       id: "GitHub.cli"
       source: "winget"
 
-  - name: Install Dev Home GitHub Extension
+  - name: InstallDevHomeGitHubExtension
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.DevHomeGitHubExtension"
@@ -269,7 +269,7 @@ resources:
   # ====================================
   # SYSTEM UTILITIES & TOOLS
   # ====================================
-  - name: Install PowerToys
+  - name: InstallPowerToys
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.PowerToys"
@@ -277,7 +277,7 @@ resources:
       id: "Microsoft.PowerToys"
       source: "winget"
 
-  - name: Install DevToys
+  - name: InstallDevToys
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install DevToys-app.DevToys"
@@ -285,7 +285,7 @@ resources:
       id: "DevToys-app.DevToys"
       source: "winget"
 
-  - name: Install Windows Performance Analyzer
+  - name: InstallWindowsPerformanceAnalyzer
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.WindowsPerformanceAnalyzer"
@@ -293,7 +293,7 @@ resources:
       id: "Microsoft.WindowsPerformanceAnalyzer"
       source: "winget"
 
-  - name: Install Sysinternals
+  - name: InstallSysinternals
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Microsoft.Sysinternals"
@@ -304,7 +304,7 @@ resources:
   # ====================================
   # TERMINAL & SHELL ENHANCEMENT
   # ====================================
-  - name: Install Oh My Posh
+  - name: InstallOhMyPosh
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install JanDeDobbeleer.OhMyPosh"
@@ -312,7 +312,7 @@ resources:
       id: "JanDeDobbeleer.OhMyPosh"
       source: "winget"
 
-  - name: Install Warp Terminal
+  - name: InstallWarpTerminal
     type: Microsoft.WinGet/Package
     metadata:
       description: "Install Warp.Warp"
