@@ -50,7 +50,7 @@ function Get-WingetConfigurationPath {
     [OutputType([string])]
     param(
         [Parameter()]
-        [string]$BasePath = $PSScriptRoot
+        [string]$BasePath = (Split-Path $PSScriptRoot -Parent)
     )
     
     $configPath = Join-Path $BasePath $CONFIG_FILE_NAME
