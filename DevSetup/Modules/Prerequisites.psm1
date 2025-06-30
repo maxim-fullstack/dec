@@ -90,7 +90,7 @@ function Confirm-DSCModule {
     
     Write-LogMessage "Checking DSC module availability..." "DEBUG"
     
-    $dscModuleName = Get-DSCModuleName
+    $dscModuleName = "PSDscResources"
     try {
         $dscModule = Get-Module -ListAvailable -Name $dscModuleName
         if (-not $dscModule) {
@@ -113,7 +113,7 @@ function Install-DSCModule {
     [CmdletBinding()]
     param()
     
-    $dscModuleName = Get-DSCModuleName
+    $dscModuleName = "PSDscResources"
     Write-LogMessage "Installing $dscModuleName module..." "INFO"
     
     try {
@@ -135,7 +135,7 @@ function Import-RequiredModules {
     
     Write-LogMessage "Importing required modules..." "DEBUG"
     
-    $dscModuleName = Get-DSCModuleName
+    $dscModuleName = "PSDscResources"
     try {
         Import-Module $dscModuleName -Force -ErrorAction Stop
         Write-LogMessage "✓ Required modules imported successfully" "INFO"

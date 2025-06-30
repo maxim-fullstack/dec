@@ -41,8 +41,7 @@ function Start-ConfigurationProcess {
     # Initialize logging
     Initialize-Logging -LogLevel $LogLevel
     
-    $scriptVersion = Get-ScriptVersion
-    Write-LogMessage "Starting DEC (Desired Environment Configuration) v$scriptVersion" "INFO"
+    Write-LogMessage "Starting DEC (Desired Environment Configuration) v1.0.0" "INFO"
     Write-LogMessage "Log file: $(Get-LogPath)" "INFO"
     
     try {
@@ -140,9 +139,9 @@ function Show-ConfigurationSummary {
     $endTime = Get-Date
     $duration = $endTime - $StartTime
     
-    $summarySeparator = Get-SummarySeparator
-    $scriptVersion = Get-ScriptVersion
-    $logDateFormat = Get-LogDateFormat
+    $summarySeparator = "=" * 60
+    $scriptVersion = "1.0.0"
+    $logDateFormat = "yyyy-MM-dd HH:mm:ss"
     
     Write-LogMessage $summarySeparator "INFO"
     Write-LogMessage "CONFIGURATION SUMMARY" "INFO"

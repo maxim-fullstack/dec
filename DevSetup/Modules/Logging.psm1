@@ -62,8 +62,7 @@ function Write-LogMessage {
         [string]$Level = "INFO"
     )
     
-    $logDateFormat = Get-LogDateFormat
-    $timestamp = Get-Date -Format $logDateFormat
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logEntry = "[$timestamp] [$Level] $Message"
     
     # Write to console based on log level
@@ -126,7 +125,12 @@ function Test-ShouldLog {
         [string]$Level
     )
     
-    $logLevels = Get-LogLevels
+    $logLevels = @{
+        "ERROR" = 0
+        "WARN"  = 1
+        "INFO"  = 2
+        "DEBUG" = 3
+    }
     return $logLevels[$Level] -le $logLevels[$Script:CurrentLogLevel]
 }
 
