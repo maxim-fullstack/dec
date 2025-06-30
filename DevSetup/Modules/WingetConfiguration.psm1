@@ -53,7 +53,8 @@ function Get-WingetConfigurationPath {
         [string]$BasePath = (Split-Path $PSScriptRoot -Parent)
     )
     
-    $configPath = Join-Path $BasePath $CONFIG_FILE_NAME
+    $configFileName = Get-ConfigFileName
+    $configPath = Join-Path $BasePath $configFileName
     Write-LogMessage "Using winget configuration file: $configPath" "DEBUG"
     
     return $configPath

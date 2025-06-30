@@ -64,7 +64,8 @@ function Get-DSCPaths {
         [string]$BasePath = $PSScriptRoot
     )
     
-    $dscPath = Join-Path $BasePath $DSC_FOLDER_NAME
+    $dscFolderName = Get-DSCFolderName
+    $dscPath = Join-Path $BasePath $dscFolderName
     
     $paths = @{
         DSCPath      = $dscPath

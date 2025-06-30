@@ -41,7 +41,8 @@ function Start-ConfigurationProcess {
     # Initialize logging
     Initialize-Logging -LogLevel $LogLevel
     
-    Write-LogMessage "Starting DEC (Desired Environment Configuration) v$SCRIPT_VERSION" "INFO"
+    $scriptVersion = Get-ScriptVersion
+    Write-LogMessage "Starting DEC (Desired Environment Configuration) v$scriptVersion" "INFO"
     Write-LogMessage "Log file: $(Get-LogPath)" "INFO"
     
     try {
@@ -139,18 +140,22 @@ function Show-ConfigurationSummary {
     $endTime = Get-Date
     $duration = $endTime - $StartTime
     
-    Write-LogMessage $SUMMARY_SEPARATOR "INFO"
+    $summarySeparator = Get-SummarySeparator
+    $scriptVersion = Get-ScriptVersion
+    $logDateFormat = Get-LogDateFormat
+    
+    Write-LogMessage $summarySeparator "INFO"
     Write-LogMessage "CONFIGURATION SUMMARY" "INFO"
-    Write-LogMessage $SUMMARY_SEPARATOR "INFO"
-    Write-LogMessage "Script Version: $SCRIPT_VERSION" "INFO"
-    Write-LogMessage "Start Time: $($StartTime.ToString($LOG_DATE_FORMAT))" "INFO"
-    Write-LogMessage "End Time: $($endTime.ToString($LOG_DATE_FORMAT))" "INFO"
+    Write-LogMessage $summarySeparator "INFO"
+    Write-LogMessage "Script Version: $scriptVersion" "INFO"
+    Write-LogMessage "Start Time: $($StartTime.ToString($logDateFormat))" "INFO"
+    Write-LogMessage "End Time: $($endTime.ToString($logDateFormat))" "INFO"
     Write-LogMessage "Total Duration: $($duration.ToString('hh\:mm\:ss'))" "INFO"
     Write-LogMessage "Log File: $(Get-LogPath)" "INFO"
-    Write-LogMessage $SUMMARY_SEPARATOR "INFO"
+    Write-LogMessage $summarySeparator "INFO"
     Write-LogMessage "✓ Developer environment configuration completed successfully!" "INFO"
     Write-LogMessage "Please restart your computer to ensure all changes take effect." "WARN"
-    Write-LogMessage $SUMMARY_SEPARATOR "INFO"
+    Write-LogMessage $summarySeparator "INFO"
 }
 
 # Export public functions

@@ -90,13 +90,14 @@ function Confirm-DSCModule {
     
     Write-LogMessage "Checking DSC module availability..." "DEBUG"
     
+    $dscModuleName = Get-DSCModuleName
     try {
-        $dscModule = Get-Module -ListAvailable -Name $DSC_MODULE_NAME
+        $dscModule = Get-Module -ListAvailable -Name $dscModuleName
         if (-not $dscModule) {
             Install-DSCModule
         }
         else {
-            Write-LogMessage "✓ $DSC_MODULE_NAME module is available" "INFO"
+            Write-LogMessage "✓ $dscModuleName module is available" "INFO"
         }
     }
     catch {
@@ -112,14 +113,15 @@ function Install-DSCModule {
     [CmdletBinding()]
     param()
     
-    Write-LogMessage "Installing $DSC_MODULE_NAME module..." "INFO"
+    $dscModuleName = Get-DSCModuleName
+    Write-LogMessage "Installing $dscModuleName module..." "INFO"
     
     try {
-        Install-Module -Name $DSC_MODULE_NAME -Force -AllowClobber -Scope AllUsers -ErrorAction Stop
-        Write-LogMessage "✓ $DSC_MODULE_NAME module installed successfully" "INFO"
+        Install-Module -Name $dscModuleName -Force -AllowClobber -Scope AllUsers -ErrorAction Stop
+        Write-LogMessage "✓ $dscModuleName module installed successfully" "INFO"
     }
     catch {
-        throw "Failed to install $DSC_MODULE_NAME module: $($_.Exception.Message)"
+        throw "Failed to install $dscModuleName module: $($_.Exception.Message)"
     }
 }
 
@@ -133,8 +135,9 @@ function Import-RequiredModules {
     
     Write-LogMessage "Importing required modules..." "DEBUG"
     
+    $dscModuleName = Get-DSCModuleName
     try {
-        Import-Module $DSC_MODULE_NAME -Force -ErrorAction Stop
+        Import-Module $dscModuleName -Force -ErrorAction Stop
         Write-LogMessage "✓ Required modules imported successfully" "INFO"
     }
     catch {
