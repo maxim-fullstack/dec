@@ -139,18 +139,22 @@ function Show-ConfigurationSummary {
     $endTime = Get-Date
     $duration = $endTime - $StartTime
     
-    Write-LogMessage (Get-SummarySeparator) "INFO"
+    $separator = Get-SummarySeparator
+    $version = Get-ScriptVersion
+    $dateFormat = Get-LogDateFormat
+    
+    Write-LogMessage $separator "INFO"
     Write-LogMessage "CONFIGURATION SUMMARY" "INFO"
-    Write-LogMessage (Get-SummarySeparator) "INFO"
-    Write-LogMessage "Script Version: $(Get-ScriptVersion)" "INFO"
-    Write-LogMessage "Start Time: $($StartTime.ToString((Get-LogDateFormat)))" "INFO"
-    Write-LogMessage "End Time: $($endTime.ToString((Get-LogDateFormat)))" "INFO"
+    Write-LogMessage $separator "INFO"
+    Write-LogMessage "Script Version: $version" "INFO"
+    Write-LogMessage "Start Time: $($StartTime.ToString($dateFormat))" "INFO"
+    Write-LogMessage "End Time: $($endTime.ToString($dateFormat))" "INFO"
     Write-LogMessage "Total Duration: $($duration.ToString('hh\:mm\:ss'))" "INFO"
     Write-LogMessage "Log File: $(Get-LogPath)" "INFO"
-    Write-LogMessage (Get-SummarySeparator) "INFO"
+    Write-LogMessage $separator "INFO"
     Write-LogMessage "✓ Developer environment configuration completed successfully!" "INFO"
     Write-LogMessage "Please restart your computer to ensure all changes take effect." "WARN"
-    Write-LogMessage (Get-SummarySeparator) "INFO"
+    Write-LogMessage $separator "INFO"
 }
 
 # Export public functions
