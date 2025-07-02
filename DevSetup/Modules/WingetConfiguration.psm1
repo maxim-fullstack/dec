@@ -32,7 +32,7 @@ function Invoke-WingetConfiguration {
         Confirm-ConfigurationFileExists -Path $ConfigPath
         Start-WingetCommand -ConfigPath $ConfigPath
         
-        Write-LogMessage "✓ Winget configuration completed successfully" "INFO"
+        Write-LogMessage "[SUCCESS] Winget configuration completed successfully" "INFO"
     }
     catch {
         Write-ErrorAndExit -Message "Winget configuration failed: $($_.Exception.Message)" -ThrowException
@@ -78,7 +78,7 @@ function Confirm-ConfigurationFileExists {
         throw "Configuration file not found: $Path"
     }
     
-    Write-LogMessage "✓ Configuration file validated" "DEBUG"
+    Write-LogMessage "[SUCCESS] Configuration file validated" "DEBUG"
 }
 
 <#
@@ -105,7 +105,7 @@ function Start-WingetCommand {
             throw "winget configuration failed with exit code: $LASTEXITCODE"
         }
         
-        Write-LogMessage "✓ Winget command executed successfully" "DEBUG"
+        Write-LogMessage "[SUCCESS] Winget command executed successfully" "DEBUG"
     }
     catch {
         throw "Failed to execute winget command: $($_.Exception.Message)"

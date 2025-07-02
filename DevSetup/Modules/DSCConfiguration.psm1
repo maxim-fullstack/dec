@@ -39,7 +39,7 @@ function Invoke-PowerShellDSC {
             Start-DSCCompilation -OutputPath $outputPath -ConfigData $configData
             Start-DSCApplication -OutputPath $outputPath
             
-            Write-LogMessage "✓ PowerShell DSC configuration completed successfully" "INFO"
+            Write-LogMessage "[SUCCESS] PowerShell DSC configuration completed successfully" "INFO"
         }
         finally {
             Set-Location $originalLocation
@@ -96,7 +96,7 @@ function Confirm-DSCScriptExists {
         throw "DSC configuration script not found: $Path"
     }
     
-    Write-LogMessage "✓ DSC script validated" "DEBUG"
+    Write-LogMessage "[SUCCESS] DSC script validated" "DEBUG"
 }
 
 <#
@@ -116,7 +116,7 @@ function Import-DSCConfiguration {
     
     try {
         . $ScriptPath
-        Write-LogMessage "✓ DSC configuration script loaded successfully" "DEBUG"
+        Write-LogMessage "[SUCCESS] DSC configuration script loaded successfully" "DEBUG"
     }
     catch {
         throw "Failed to load DSC configuration script: $($_.Exception.Message)"
@@ -196,7 +196,7 @@ function Start-DSCCompilation {
     
     try {
         $null = CustomConfiguration -OutputPath $OutputPath @ConfigData
-        Write-LogMessage "✓ DSC configuration compiled to: $OutputPath" "INFO"
+        Write-LogMessage "[SUCCESS] DSC configuration compiled to: $OutputPath" "INFO"
     }
     catch {
         throw "Failed to compile DSC configuration: $($_.Exception.Message)"
@@ -220,7 +220,7 @@ function Start-DSCApplication {
     
     try {
         Start-DscConfiguration -Path $OutputPath -Wait -Verbose -Force -ErrorAction Stop
-        Write-LogMessage "✓ DSC configuration applied successfully" "INFO"
+        Write-LogMessage "[SUCCESS] DSC configuration applied successfully" "INFO"
     }
     catch {
         throw "Failed to apply DSC configuration: $($_.Exception.Message)"

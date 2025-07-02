@@ -25,7 +25,7 @@ function Test-Prerequisites {
         Confirm-DSCModule
         Import-RequiredModules
         
-        Write-LogMessage "✓ All prerequisites validated successfully" "INFO"
+        Write-LogMessage "[SUCCESS] All prerequisites validated successfully" "INFO"
     }
     catch {
         Write-ErrorAndExit -Message "Prerequisite validation failed: $($_.Exception.Message)" -ThrowException
@@ -50,7 +50,7 @@ function Confirm-AdministratorPrivileges {
             throw "This script must be run as Administrator. Please restart PowerShell as Administrator and try again."
         }
         
-        Write-LogMessage "✓ Running with Administrator privileges" "INFO"
+        Write-LogMessage "[SUCCESS] Running with Administrator privileges" "INFO"
     }
     catch {
         throw "Failed to verify administrator privileges: $($_.Exception.Message)"
@@ -73,7 +73,7 @@ function Confirm-WingetAvailability {
             throw "winget command failed with exit code: $LASTEXITCODE"
         }
         
-        Write-LogMessage "✓ winget is available (Version: $wingetVersion)" "INFO"
+        Write-LogMessage "[SUCCESS] winget is available (Version: $wingetVersion)" "INFO"
     }
     catch {
         throw "winget is required but not available. Please install the App Installer package from Microsoft Store."
@@ -97,7 +97,7 @@ function Confirm-DSCModule {
             Install-DSCModule
         }
         else {
-            Write-LogMessage "✓ $dscModuleName module is available" "INFO"
+            Write-LogMessage "[SUCCESS] $dscModuleName module is available" "INFO"
         }
     }
     catch {
@@ -118,7 +118,7 @@ function Install-DSCModule {
     
     try {
         Install-Module -Name $dscModuleName -Force -AllowClobber -Scope AllUsers -ErrorAction Stop
-        Write-LogMessage "✓ $dscModuleName module installed successfully" "INFO"
+        Write-LogMessage "[SUCCESS] $dscModuleName module installed successfully" "INFO"
     }
     catch {
         throw "Failed to install $dscModuleName module: $($_.Exception.Message)"
@@ -138,7 +138,7 @@ function Import-RequiredModules {
     $dscModuleName = "PSDscResources"
     try {
         Import-Module $dscModuleName -Force -ErrorAction Stop
-        Write-LogMessage "✓ Required modules imported successfully" "INFO"
+        Write-LogMessage "[SUCCESS] Required modules imported successfully" "INFO"
     }
     catch {
         throw "Failed to import required modules: $($_.Exception.Message)"

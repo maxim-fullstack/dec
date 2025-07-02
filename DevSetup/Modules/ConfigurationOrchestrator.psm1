@@ -152,7 +152,7 @@ function Show-ConfigurationSummary {
     Write-LogMessage "Total Duration: $($duration.ToString('hh\:mm\:ss'))" "INFO"
     Write-LogMessage "Log File: $(Get-LogPath)" "INFO"
     Write-LogMessage $separator "INFO"
-    Write-LogMessage "✓ Developer environment configuration completed successfully!" "INFO"
+    Write-LogMessage "[SUCCESS] Developer environment configuration completed successfully!" "INFO"
     Write-LogMessage "Please restart your computer to ensure all changes take effect." "WARN"
     Write-LogMessage $separator "INFO"
 }
