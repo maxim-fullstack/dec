@@ -53,9 +53,11 @@ function Show-Help {
     Write-Host "  -Help         Show this help message"
     Write-Host ""
     Write-Host "Requirements:"
-    Write-Host "  - Puppet must be installed"
     Write-Host "  - PowerShell must be run as Administrator"
     Write-Host "  - Windows 10/11 with winget available"
+    Write-Host "  - Internet connection for downloading packages"
+    Write-Host ""
+    Write-Host "Note: Puppet will be automatically installed if not present."
 }
 
 # Check if running as Administrator
@@ -89,10 +91,69 @@ function Test-Puppet {
         # Puppet command not found
     }
     
-    Write-ErrorMessage "Puppet is not installed or not in PATH"
-    Write-Info "Please install Puppet and try again"
-    Write-Info "Download from: https://puppet.com/docs/puppet/latest/install_puppet.html"
+    Write-Warning "Puppet is not installed"
     return $false
+}
+
+# Install Puppet on Windows
+function Install-Puppet {
+    Write-Info "Installing Puppet..."
+    
+    # Check if winget is available for installation
+    if (-not (Test-CommandExists "winget")) {
+        Write-ErrorMessage "winget is required to install Puppet automatically"
+        Write-Info "Please install Puppet manually from: https://puppet.com/docs/puppet/latest/install_puppet.html"
+        return $false
+    }
+    
+    try {
+        Write-Info "Installing Puppet using winget..."
+        & winget install --id PuppetLabs.Puppet --silent --accept-package-agreements --accept-source-agreements
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "Puppet installed successfully"
+            
+            # Refresh PATH environment variable
+            Write-Info "Refreshing environment variables..."
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+            
+            # Verify installation
+            try {
+                $puppetVersion = & puppet --version 2>$null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Success "Puppet installation verified: $puppetVersion"
+                    return $true
+                }
+            }
+            catch {
+                Write-Warning "Puppet installed but not immediately available in PATH"
+                Write-Info "You may need to restart your terminal after the script completes"
+                return $true
+            }
+        }
+        else {
+            Write-ErrorMessage "Failed to install Puppet via winget"
+            Write-Info "Please install Puppet manually from: https://puppet.com/docs/puppet/latest/install_puppet.html"
+            return $false
+        }
+    }
+    catch {
+        Write-ErrorMessage "Error installing Puppet: $($_.Exception.Message)"
+        Write-Info "Please install Puppet manually from: https://puppet.com/docs/puppet/latest/install_puppet.html"
+        return $false
+    }
+}
+
+# Check if command exists
+function Test-CommandExists {
+    param([string]$Command)
+    try {
+        $null = Get-Command $Command -ErrorAction Stop
+        return $true
+    }
+    catch {
+        return $false
+    }
 }
 
 # Check if winget is available
@@ -207,9 +268,13 @@ function Main {
             Write-ErrorMessage "Privilege check failed"
             exit 1 
         }
-        if (-not (Test-Puppet)) { 
-            Write-ErrorMessage "Puppet validation failed"
-            exit 1 
+        # Check and install Puppet if needed
+        if (-not (Test-Puppet)) {
+            Write-Info "Puppet not found, attempting automatic installation..."
+            if (-not (Install-Puppet)) {
+                Write-ErrorMessage "Puppet installation failed"
+                exit 1
+            }
         }
         
         # Test winget but don't exit on failure (warning only)

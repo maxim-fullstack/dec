@@ -34,8 +34,12 @@ puppet-workstation-config/
 
 ### Prerequisites
 
-- Puppet Agent installed on the target system
 - Administrator/root privileges for package installation
+- Internet connection for downloading packages
+- **Windows**: Windows 10 (version 1809 or later) or Windows 11 with winget
+- **Linux**: Supported distributions: Ubuntu, Debian, CentOS, RHEL, Fedora
+
+**Note**: Puppet will be automatically installed if not present on the system.
 
 ### Installation
 
@@ -135,8 +139,19 @@ This project implements Puppet best practices:
 ### Common Issues
 
 1. **Permission Denied**: Ensure you're running with appropriate privileges
-2. **Package Manager Not Found**: Verify the package manager is installed
+2. **Package Manager Not Found**: 
+   - Windows: Ensure winget is available (Windows 10 1809+ or Windows 11)
+   - Linux: Ensure your distribution is supported
 3. **Git Already Configured**: The configuration will update existing settings
+4. **Puppet Installation Failed**: Check internet connectivity and package manager availability
+5. **PATH Issues**: Restart your terminal after installation to refresh environment variables
+
+### Installation Logs
+
+If Puppet installation fails, check:
+- Internet connectivity
+- Package manager functionality
+- System compatibility
 
 ### Logs
 

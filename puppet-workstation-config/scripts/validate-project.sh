@@ -43,8 +43,16 @@ command_exists() {
 validate_puppet_syntax() {
     log_info "Validating Puppet manifest syntax..."
     
-    if ! command_exists puppet; then
+    # Check for Puppet in common locations
+    local puppet_cmd=""
+    if command -v puppet >/dev/null 2>&1; then
+        puppet_cmd="puppet"
+    elif [[ -x "/opt/puppetlabs/bin/puppet" ]]; then
+        puppet_cmd="/opt/puppetlabs/bin/puppet"
+        log_info "Using Puppet from: /opt/puppetlabs/bin/puppet"
+    else
         log_warning "Puppet not found, skipping syntax validation"
+        log_info "Install Puppet to enable syntax validation"
         return 0
     fi
     
@@ -53,7 +61,7 @@ validate_puppet_syntax() {
     # Find all .pp files and validate them
     while IFS= read -r -d '' file; do
         log_info "Checking: $file"
-        if ! puppet parser validate "$file"; then
+        if ! "$puppet_cmd" parser validate "$file"; then
             log_error "Syntax error in: $file"
             ((errors++))
         fi

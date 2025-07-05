@@ -73,8 +73,18 @@ function Test-CommandExists {
 function Test-PuppetSyntax {
     Write-Info "Validating Puppet manifest syntax..."
     
-    if (-not (Test-CommandExists "puppet")) {
+    # Check for Puppet in common locations
+    $puppetCmd = $null
+    if (Test-CommandExists "puppet") {
+        $puppetCmd = "puppet"
+    }
+    elseif (Test-Path "C:\Program Files\Puppet Labs\Puppet\bin\puppet.exe") {
+        $puppetCmd = "C:\Program Files\Puppet Labs\Puppet\bin\puppet.exe"
+        Write-Info "Using Puppet from: C:\Program Files\Puppet Labs\Puppet\bin\"
+    }
+    else {
         Write-Warning "Puppet not found, skipping syntax validation"
+        Write-Info "Install Puppet to enable syntax validation"
         return $true
     }
     
@@ -89,7 +99,7 @@ function Test-PuppetSyntax {
     foreach ($file in $puppetFiles) {
         Write-Info "Checking: $($file.FullName)"
         try {
-            $result = & puppet parser validate $file.FullName 2>&1
+            $result = & $puppetCmd parser validate $file.FullName 2>&1
             if ($LASTEXITCODE -ne 0) {
                 Write-ErrorMessage "Syntax error in: $($file.FullName)"
                 Write-ErrorMessage $result
