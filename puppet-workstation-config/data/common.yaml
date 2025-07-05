@@ -1,0 +1,26 @@
+# Common configuration data
+# This file contains default settings that apply to all platforms
+
+---
+# Git configuration settings
+git::config:
+  user.name: "Developer"
+  user.email: "developer@localhost"
+  core.editor: "nano"
+  init.defaultBranch: "main"
+  pull.rebase: "false"
+  core.safecrlf: "warn"
+
+# Git aliases for enhanced productivity
+git::aliases:
+  st: "status"
+  co: "checkout"
+  br: "branch"
+  ci: "commit"
+  lg: "log --oneline --graph --decorate --all"
+  last: "log -1 HEAD"
+  unstage: "reset HEAD --"
+
+# Default Git package name (overridden by OS-specific data)
+git::package_name: "git"
+git::package_manager: "unknown"

@@ -1,0 +1,18 @@
+# Hiera configuration for data-driven Puppet configuration
+# This file defines the hierarchy for configuration data lookup
+
+---
+version: 5
+
+defaults:
+  datadir: data
+  data_hash: yaml_data
+
+hierarchy:
+  # OS-specific data (highest priority)
+  - name: "Per OS family"
+    path: "os/%{facts.os.family}.yaml"
+
+  # Common data (lowest priority)
+  - name: "Common data"
+    path: "common.yaml"

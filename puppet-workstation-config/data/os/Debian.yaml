@@ -1,0 +1,12 @@
+# Debian/Ubuntu-specific configuration data
+# Settings specific to Debian-based Linux distributions
+
+---
+# Git package configuration for Debian/Ubuntu
+git::package_name: "git"
+git::package_manager: "apt"
+
+# Linux-specific Git configuration
+git::config:
+  core.autocrlf: "input"
+  core.editor: "nano"

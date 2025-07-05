@@ -1,0 +1,13 @@
+# Windows-specific configuration data
+# Settings specific to Windows operating systems
+
+---
+# Git package configuration for Windows
+git::package_name: "Git.Git"
+git::package_manager: "winget"
+
+# Windows-specific Git configuration
+git::config:
+  core.autocrlf: "true"
+  core.editor: "notepad"
+  credential.helper: "manager-core"
