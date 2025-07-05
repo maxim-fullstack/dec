@@ -6,6 +6,17 @@ Configuration CustomConfiguration {
         [string[]]$ComputerName = 'localhost'
     )
     
+    # Ensure PSDscResources module is available
+    if (-not (Get-Module -ListAvailable -Name PSDscResources)) {
+        Install-Module -Name PSDscResources -Force -Scope CurrentUser
+    }
+    
+    # Import template manager module
+    $templateManagerPath = Join-Path $PSScriptRoot "..\Modules\TemplateManager.psm1"
+    if (Test-Path $templateManagerPath) {
+        Import-Module $templateManagerPath -Force
+    }
+    
     Import-DscResource -ModuleName PSDscResources
     
     Node $ComputerName {
@@ -138,68 +149,35 @@ Configuration CustomConfiguration {
                     New-Item -ItemType Directory -Path $profileDir -Force
                 }
                 
-                # PowerShell profile content
-                $profileContent = @"
-# DEC (Desired Environment Configuration) - PowerShell Profile
-# Auto-generated on $(Get-Date)
+                try {
+                    # Load PowerShell profile template
+                    $templateDir = Join-Path $using:PSScriptRoot "Templates"
+                    $profileContent = Get-PowerShellProfileTemplate -TemplateDirectory $templateDir
+                    
+                    # Process template with current date
+                    $processedContent = Invoke-TemplateProcessing -TemplateContent $profileContent
+                    
+                    # Write the profile content
+                    Set-Content -Path $profilePath -Value $processedContent -Encoding UTF8
+                    Write-Verbose "PowerShell profile created at: $profilePath"
+                }
+                catch {
+                    # Fallback to basic profile if template loading fails
+                    $basicProfile = @"
+# DEC (Desired Environment Configuration) - PowerShell Profile (Basic)
+# Generated on $(Get-Date)
 
-# ====================================
-# ALIASES
-# ====================================
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name la -Value Get-ChildItem
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name touch -Value New-Item
 Set-Alias -Name which -Value Get-Command
 
-# ====================================
-# FUNCTIONS
-# ====================================
-function cd-dev { Set-Location 'C:\Dev' }
-function cd-projects { Set-Location 'C:\Dev\Projects' }
-function cd-tools { Set-Location 'C:\Dev\Tools' }
-function cd-scripts { Set-Location 'C:\Dev\Scripts' }
-
-# Git shortcuts
-function gs { git status }
-function ga { git add . }
-function gc { param([string]`$message) git commit -m `$message }
-function gp { git push }
-function gl { git log --oneline -10 }
-
-# ====================================
-# PROMPT CUSTOMIZATION
-# ====================================
-function prompt {
-    `$currentPath = Get-Location
-    `$gitBranch = ""
-    
-    # Check if we're in a git repository
-    if (Get-Command git -ErrorAction SilentlyContinue) {
-        `$gitStatus = git rev-parse --abbrev-ref HEAD 2>`$null
-        if (`$gitStatus) {
-            `$gitBranch = " [git:`$gitStatus]"
-        }
-    }
-    
-    `$promptText = "PS `$(`$currentPath)`$gitBranch> "
-    return `$promptText
-}
-
-# ====================================
-# MODULE IMPORTS
-# ====================================
-# Import useful modules if available
-if (Get-Module -ListAvailable -Name posh-git) {
-    Import-Module posh-git
-}
-
 Write-Host "DEC PowerShell Profile Loaded!" -ForegroundColor Green
 "@
-                
-                # Write the profile content
-                Set-Content -Path $profilePath -Value $profileContent -Encoding UTF8
-                Write-Verbose "PowerShell profile created at: $profilePath"
+                    Set-Content -Path $profilePath -Value $basicProfile -Encoding UTF8
+                    Write-Verbose "Basic PowerShell profile created at: $profilePath (template loading failed)"
+                }
             }
         }
         
@@ -210,8 +188,26 @@ Write-Host "DEC PowerShell Profile Loaded!" -ForegroundColor Green
             GetScript  = {
                 $gitConfigPath = Join-Path $env:USERPROFILE '.gitconfig'
                 $exists = Test-Path $gitConfigPath
+                $gitAliases = @()
+                
+                if ($exists) {
+                    # Check for existing Git aliases
+                    try {
+                        $gitOutput = & git config --global --get-regexp "alias\." 2>$null
+                        if ($gitOutput) {
+                            $gitAliases = $gitOutput | ForEach-Object { $_.Split(' ')[0] -replace 'alias\.', '' }
+                        }
+                    }
+                    catch {
+                        # Git not available or config error
+                    }
+                }
+                
                 return @{
-                    Result     = $exists
+                    Result     = @{
+                        ConfigExists = $exists
+                        Aliases      = $gitAliases
+                    }
                     GetScript  = $GetScript
                     SetScript  = $SetScript
                     TestScript = $TestScript
@@ -220,14 +216,83 @@ Write-Host "DEC PowerShell Profile Loaded!" -ForegroundColor Green
             
             TestScript = {
                 $gitConfigPath = Join-Path $env:USERPROFILE '.gitconfig'
-                return (Test-Path $gitConfigPath)
+                
+                # Check if Git is available
+                try {
+                    $null = & git --version 2>$null
+                }
+                catch {
+                    Write-Verbose "Git not yet available, configuration will be applied when Git is installed"
+                    return $false
+                }
+                
+                if (-not (Test-Path $gitConfigPath)) {
+                    return $false
+                }
+                
+                # Check if required aliases exist
+                $requiredAliases = @('st', 'co', 'br', 'ci', 'unstage', 'last', 'logs', 'tree', 'uncommit', 'save', 'load', 'aliases')
+                
+                foreach ($alias in $requiredAliases) {
+                    try {
+                        $aliasValue = & git config --global "alias.$alias" 2>$null
+                        if (-not $aliasValue) {
+                            Write-Verbose "Missing Git alias: $alias"
+                            return $false
+                        }
+                    }
+                    catch {
+                        Write-Verbose "Error checking Git alias: $alias"
+                        return $false
+                    }
+                }
+                
+                return $true
             }
             
             SetScript  = {
                 $gitConfigPath = Join-Path $env:USERPROFILE '.gitconfig'
                 
-                # Basic git configuration
-                $gitConfig = @"
+                # Wait for Git to be available (since it might still be installing)
+                $maxRetries = 30
+                $retryCount = 0
+                
+                do {
+                    try {
+                        $null = & git --version 2>$null
+                        break
+                    }
+                    catch {
+                        Start-Sleep -Seconds 2
+                        $retryCount++
+                        Write-Verbose "Waiting for Git to become available... ($retryCount/$maxRetries)"
+                    }
+                } while ($retryCount -lt $maxRetries)
+                
+                if ($retryCount -ge $maxRetries) {
+                    throw "Git is not available after waiting. Please ensure Git is properly installed."
+                }
+                
+                try {
+                    # Load Git configuration template
+                    $templateDir = Join-Path $using:PSScriptRoot "Templates"
+                    $gitConfig = Get-GitConfigTemplate -TemplateDirectory $templateDir
+                    
+                    # Backup existing config if it exists
+                    if (Test-Path $gitConfigPath) {
+                        $backupPath = "$gitConfigPath.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+                        Copy-Item $gitConfigPath $backupPath
+                        Write-Verbose "Existing Git config backed up to: $backupPath"
+                    }
+                    
+                    Set-Content -Path $gitConfigPath -Value $gitConfig -Encoding UTF8
+                    Write-Verbose "Enhanced Git global configuration created at: $gitConfigPath"
+                }
+                catch {
+                    Write-Verbose "Template loading failed, using fallback Git configuration: $($_.Exception.Message)"
+                    
+                    # Fallback basic Git configuration
+                    $basicGitConfig = @"
 [user]
     name = Developer
     email = developer@example.com
@@ -240,12 +305,6 @@ Write-Host "DEC PowerShell Profile Loaded!" -ForegroundColor Green
 [init]
     defaultBranch = main
 
-[pull]
-    rebase = false
-
-[push]
-    default = simple
-
 [alias]
     st = status
     co = checkout
@@ -253,17 +312,23 @@ Write-Host "DEC PowerShell Profile Loaded!" -ForegroundColor Green
     ci = commit
     unstage = reset HEAD --
     last = log -1 HEAD
-    visual = !gitk
     
 [color]
     ui = auto
-    
-[credential]
-    helper = manager-core
 "@
+                    Set-Content -Path $gitConfigPath -Value $basicGitConfig -Encoding UTF8
+                    Write-Verbose "Basic Git configuration created at: $gitConfigPath"
+                }
                 
-                Set-Content -Path $gitConfigPath -Value $gitConfig -Encoding UTF8
-                Write-Verbose "Git global configuration created at: $gitConfigPath"
+                # Verify the configuration was applied
+                Start-Sleep -Seconds 1
+                try {
+                    $aliasCount = (& git config --global --get-regexp "alias\." | Measure-Object).Count
+                    Write-Verbose "Successfully configured $aliasCount Git aliases"
+                }
+                catch {
+                    Write-Verbose "Note: Git configuration created, but verification failed (this is normal during initial setup)"
+                }
             }
         }
         

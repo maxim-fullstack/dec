@@ -1,0 +1,131 @@
+[user]
+    name = Developer
+    email = developer@example.com
+
+[core]
+    autocrlf = true
+    editor = code --wait
+    longpaths = true
+    pager = less -FRSX
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[merge]
+    tool = vscode
+    ff = false
+
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+
+[diff]
+    tool = vscode
+    colorMoved = zebra
+
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+
+# ====================================
+# COMPREHENSIVE GIT ALIASES
+# ====================================
+[alias]
+    # === Status and Information ===
+    st = status
+    s = status --short --branch
+    info = remote show origin
+    
+    # === Branch Management ===
+    br = branch
+    branches = branch -a
+    co = checkout
+    cob = checkout -b
+    com = checkout main
+    cod = checkout develop
+    
+    # === Commit Operations ===
+    ci = commit
+    cm = commit -m
+    ca = commit -am
+    amend = commit --amend
+    
+    # === Staging Operations ===
+    a = add
+    aa = add .
+    unstage = reset HEAD --
+    
+    # === Log and History ===
+    last = log -1 HEAD
+    logs = log --oneline --graph --decorate
+    tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    
+    # === Diff Operations ===
+    d = diff
+    dc = diff --cached
+    dt = difftool
+    
+    # === Stash Operations ===
+    save = stash save -u
+    load = stash pop
+    stashes = stash list
+    
+    # === Remote Operations ===
+    f = fetch
+    p = push
+    pl = pull
+    up = push -u origin HEAD
+    
+    # === Reset Operations ===
+    uncommit = reset --soft HEAD~1
+    unstage = reset HEAD --
+    
+    # === Utility Aliases ===
+    aliases = config --get-regexp alias
+    remotes = remote -v
+    tags = tag -l
+    visual = !gitk
+    
+    # === Advanced Operations ===
+    cleanup = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+    publish = "!git push -u origin $(git branch-name)"
+    unpublish = "!git push origin :$(git branch-name)"
+    branch-name = "!git rev-parse --abbrev-ref HEAD"
+    
+    # === Search and Find ===
+    find = "!git ls-files | grep -i"
+    grep = grep -Ii
+    
+[color]
+    ui = auto
+    branch = auto
+    diff = auto
+    status = auto
+    
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+    
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+    
+[credential]
+    helper = manager-core

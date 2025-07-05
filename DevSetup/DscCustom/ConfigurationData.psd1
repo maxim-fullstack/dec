@@ -37,10 +37,33 @@
             
             # Git Aliases Configuration
             GitAliases           = @(
+                # === Status and Information ===
                 @{
                     Name        = 'st'
                     Command     = 'status'
                     Description = 'Git status'
+                },
+                @{
+                    Name        = 's'
+                    Command     = 'status --short --branch'
+                    Description = 'Git short status with branch info'
+                },
+                @{
+                    Name        = 'info'
+                    Command     = 'remote show origin'
+                    Description = 'Show remote repository information'
+                },
+                
+                # === Branch Management ===
+                @{
+                    Name        = 'br'
+                    Command     = 'branch'
+                    Description = 'Git branch'
+                },
+                @{
+                    Name        = 'branches'
+                    Command     = 'branch -a'
+                    Description = 'List all branches'
                 },
                 @{
                     Name        = 'co'
@@ -48,29 +71,199 @@
                     Description = 'Git checkout'
                 },
                 @{
-                    Name        = 'br'
-                    Command     = 'branch'
-                    Description = 'Git branch'
+                    Name        = 'cob'
+                    Command     = 'checkout -b'
+                    Description = 'Create and checkout new branch'
                 },
+                @{
+                    Name        = 'com'
+                    Command     = 'checkout main'
+                    Description = 'Checkout main branch'
+                },
+                @{
+                    Name        = 'cod'
+                    Command     = 'checkout develop'
+                    Description = 'Checkout develop branch'
+                },
+                
+                # === Commit Operations ===
                 @{
                     Name        = 'ci'
                     Command     = 'commit'
                     Description = 'Git commit'
                 },
                 @{
+                    Name        = 'cm'
+                    Command     = 'commit -m'
+                    Description = 'Commit with message'
+                },
+                @{
+                    Name        = 'ca'
+                    Command     = 'commit -am'
+                    Description = 'Add all and commit with message'
+                },
+                @{
+                    Name        = 'amend'
+                    Command     = 'commit --amend'
+                    Description = 'Amend last commit'
+                },
+                
+                # === Staging Operations ===
+                @{
+                    Name        = 'a'
+                    Command     = 'add'
+                    Description = 'Git add'
+                },
+                @{
+                    Name        = 'aa'
+                    Command     = 'add .'
+                    Description = 'Add all files'
+                },
+                @{
                     Name        = 'unstage'
                     Command     = 'reset HEAD --'
                     Description = 'Unstage files'
                 },
+                
+                # === Log and History ===
                 @{
                     Name        = 'last'
                     Command     = 'log -1 HEAD'
                     Description = 'Show last commit'
                 },
                 @{
+                    Name        = 'logs'
+                    Command     = 'log --oneline --graph --decorate'
+                    Description = 'Show log in oneline format with graph'
+                },
+                @{
+                    Name        = 'tree'
+                    Command     = 'log --graph --pretty=format:''%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'' --abbrev-commit --all'
+                    Description = 'Show commit tree with colors'
+                },
+                @{
+                    Name        = 'lg'
+                    Command     = 'log --color --graph --pretty=format:''%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'' --abbrev-commit'
+                    Description = 'Show colored log graph'
+                },
+                
+                # === Diff Operations ===
+                @{
+                    Name        = 'd'
+                    Command     = 'diff'
+                    Description = 'Git diff'
+                },
+                @{
+                    Name        = 'dc'
+                    Command     = 'diff --cached'
+                    Description = 'Diff staged changes'
+                },
+                @{
+                    Name        = 'dt'
+                    Command     = 'difftool'
+                    Description = 'Launch diff tool'
+                },
+                
+                # === Stash Operations ===
+                @{
+                    Name        = 'save'
+                    Command     = 'stash save -u'
+                    Description = 'Stash changes including untracked files'
+                },
+                @{
+                    Name        = 'load'
+                    Command     = 'stash pop'
+                    Description = 'Apply and remove last stash'
+                },
+                @{
+                    Name        = 'stashes'
+                    Command     = 'stash list'
+                    Description = 'List all stashes'
+                },
+                
+                # === Remote Operations ===
+                @{
+                    Name        = 'f'
+                    Command     = 'fetch'
+                    Description = 'Git fetch'
+                },
+                @{
+                    Name        = 'p'
+                    Command     = 'push'
+                    Description = 'Git push'
+                },
+                @{
+                    Name        = 'pl'
+                    Command     = 'pull'
+                    Description = 'Git pull'
+                },
+                @{
+                    Name        = 'up'
+                    Command     = 'push -u origin HEAD'
+                    Description = 'Push and set upstream'
+                },
+                
+                # === Reset Operations ===
+                @{
+                    Name        = 'uncommit'
+                    Command     = 'reset --soft HEAD~1'
+                    Description = 'Undo last commit but keep changes staged'
+                },
+                
+                # === Utility Aliases ===
+                @{
+                    Name        = 'aliases'
+                    Command     = 'config --get-regexp alias'
+                    Description = 'List all Git aliases'
+                },
+                @{
+                    Name        = 'remotes'
+                    Command     = 'remote -v'
+                    Description = 'List all remotes'
+                },
+                @{
+                    Name        = 'tags'
+                    Command     = 'tag -l'
+                    Description = 'List all tags'
+                },
+                @{
                     Name        = 'visual'
                     Command     = '!gitk'
                     Description = 'Launch git GUI'
+                },
+                
+                # === Advanced Operations ===
+                @{
+                    Name        = 'cleanup'
+                    Command     = '!git branch --merged | grep -v ''\\*'' | xargs -n 1 git branch -d'
+                    Description = 'Delete merged branches'
+                },
+                @{
+                    Name        = 'publish'
+                    Command     = '!git push -u origin $(git branch-name)'
+                    Description = 'Publish current branch'
+                },
+                @{
+                    Name        = 'unpublish'
+                    Command     = '!git push origin :$(git branch-name)'
+                    Description = 'Delete remote branch'
+                },
+                @{
+                    Name        = 'branch-name'
+                    Command     = '!git rev-parse --abbrev-ref HEAD'
+                    Description = 'Get current branch name'
+                },
+                
+                # === Search and Find ===
+                @{
+                    Name        = 'find'
+                    Command     = '!git ls-files | grep -i'
+                    Description = 'Find files by name'
+                },
+                @{
+                    Name        = 'grep'
+                    Command     = 'grep -Ii'
+                    Description = 'Search in repository content'
                 }
             )
             
