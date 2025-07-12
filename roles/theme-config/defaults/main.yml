@@ -1,0 +1,10 @@
+---
+# Theme Configuration Role Defaults
+theme:
+  dark_mode: true
+  windows:
+    dark_mode: true
+    accent_color: ""
+  linux:
+    gtk_theme: "Adwaita-dark"
+    icon_theme: "Adwaita"

@@ -1,0 +1,58 @@
+---
+# Theme Configuration Tasks for Linux
+- name: Install GTK theme packages (Ubuntu/Debian)
+  apt:
+    name:
+      - adwaita-gtk2-theme
+      - gnome-themes-extra
+    state: present
+  when: ansible_pkg_mgr == 'apt'
+  tags: [theme-packages]
+
+- name: Set GTK dark theme
+  dconf:
+    key: "/org/gnome/desktop/interface/gtk-theme"
+    value: "'{{ theme.linux.gtk_theme | default('Adwaita-dark') }}'"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [theme-gtk]
+
+- name: Set icon theme
+  dconf:
+    key: "/org/gnome/desktop/interface/icon-theme"
+    value: "'{{ theme.linux.icon_theme | default('Adwaita') }}'"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [theme-icons]
+
+- name: Set GNOME dark theme preference
+  dconf:
+    key: "/org/gnome/desktop/interface/color-scheme"
+    value: "'prefer-dark'"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [theme-gnome]
+
+- name: Configure terminal dark theme (GNOME Terminal)
+  dconf:
+    key: "/org/gnome/terminal/legacy/profiles:/:{{ ansible_user_id }}/use-theme-colors"
+    value: "false"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [terminal-theme]
+
+- name: Set terminal background color
+  dconf:
+    key: "/org/gnome/terminal/legacy/profiles:/:{{ ansible_user_id }}/background-color"
+    value: "'rgb(23,20,33)'"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [terminal-theme]
+
+- name: Set terminal foreground color
+  dconf:
+    key: "/org/gnome/terminal/legacy/profiles:/:{{ ansible_user_id }}/foreground-color"
+    value: "'rgb(208,207,204)'"
+  when: ansible_env.XDG_CURRENT_DESKTOP is defined
+  ignore_errors: true
+  tags: [terminal-theme]

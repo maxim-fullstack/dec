@@ -1,0 +1,12 @@
+---
+# Theme Configuration Role - Main Tasks
+- name: Include platform-specific theme tasks
+  include_tasks: "{{ ansible_system | lower }}.yml"
+  when: theme.dark_mode | default(false)
+
+- name: Display theme configuration
+  debug:
+    msg:
+      - "Dark theme: {{ 'enabled' if theme.dark_mode | default(false) else 'disabled' }}"
+      - "Platform: {{ ansible_system }}"
+  tags: always

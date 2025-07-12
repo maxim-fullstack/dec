@@ -1,0 +1,83 @@
+---
+# System Configuration Tasks for Linux
+- name: Set timezone
+  timezone:
+    name: "{{ system.timezone }}"
+  when:
+    - system.timezone is defined
+    - system.timezone != ""
+  tags: [system, timezone]
+
+- name: Configure automatic updates (Ubuntu/Debian)
+  block:
+    - name: Install unattended-upgrades
+      apt:
+        name: unattended-upgrades
+        state: present
+
+    - name: Enable automatic updates
+      copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+        mode: "0644"
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - system.auto_updates | default(true)
+  tags: [system, auto-updates]
+
+- name: Configure swappiness
+  sysctl:
+    name: vm.swappiness
+    value: "{{ system.linux.swappiness | default(10) }}"
+    state: present
+    reload: yes
+  when: system.linux.swappiness is defined
+  tags: [system, swappiness]
+
+- name: Enable firewall (UFW)
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+  when:
+    - system.linux.enable_firewall | default(true)
+    - ansible_pkg_mgr == 'apt'
+  tags: [system, firewall]
+
+- name: Install and configure fail2ban
+  block:
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Start and enable fail2ban
+      systemd:
+        name: fail2ban
+        state: started
+        enabled: yes
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - system.linux.enable_fail2ban | default(false)
+  tags: [system, security, fail2ban]
+
+- name: Configure limits
+  pam_limits:
+    domain: "{{ ansible_user_id }}"
+    limit_type: "{{ item.type }}"
+    limit_item: "{{ item.item }}"
+    value: "{{ item.value }}"
+  loop: "{{ system.linux.limits | default([]) }}"
+  when: system.linux.limits is defined
+  tags: [system, limits]
+
+- name: Display Linux system configuration
+  debug:
+    msg:
+      - "Timezone: {{ system.timezone | default('unchanged') }}"
+      - "Swappiness: {{ system.linux.swappiness | default(10) }}"
+      - "Firewall: {{ 'enabled' if system.linux.enable_firewall | default(true) else 'disabled' }}"
+      - "Auto updates: {{ 'enabled' if system.auto_updates | default(true) else 'disabled' }}"
+  tags: [system, status]

@@ -1,0 +1,184 @@
+# DEC Configuration File
+# This file contains the configuration for your workstation setup
+
+# User Information
+user:
+  name: "Your Name"
+  email: "your.email@example.com"
+  username: "{{ ansible_user_id }}"
+
+# Git Configuration
+git:
+  # User configuration
+  user_name: "{{ user.name }}"
+  user_email: "{{ user.email }}"
+
+  # Git aliases
+  aliases:
+    st: "status"
+    co: "checkout"
+    br: "branch"
+    ci: "commit"
+    lg: "log --oneline --graph --decorate --all"
+    last: "log -1 HEAD"
+    unstage: "reset HEAD --"
+    visual: "!gitk"
+
+  # Default branch name
+  default_branch: "main"
+
+  # Git configuration
+  push_default: "simple"
+  pull_rebase: true
+
+# Theme Configuration
+theme:
+  # Dark theme preference
+  dark_mode: true
+
+  # Windows specific theme settings
+  windows:
+    dark_mode: true
+    accent_color: "blue"
+
+  # Linux specific theme settings
+  linux:
+    gtk_theme: "Adwaita-dark"
+    icon_theme: "Adwaita"
+
+# Package Installation
+packages:
+  # Common packages to install on all platforms
+  common:
+    - git
+    - curl
+    - wget
+    - vim
+    - tree
+
+  # Windows specific packages (via winget)
+  windows:
+    - Microsoft.WindowsTerminal
+    - Microsoft.PowerShell
+    - Microsoft.VisualStudioCode
+    - Git.Git
+    - 7zip.7zip
+    - Mozilla.Firefox
+    - Notepad++.Notepad++
+    - Google.Chrome
+
+  # Linux specific packages (via apt)
+  linux:
+    - git
+    - curl
+    - wget
+    - vim
+    - tree
+    - htop
+    - neofetch
+    - build-essential
+    - software-properties-common
+    - firefox
+    - code
+
+  # Snap packages (Linux only)
+  snap:
+    - discord
+    - slack
+
+  # Flatpak packages (Linux only)
+  flatpak:
+    - org.mozilla.firefox
+
+  # Chocolatey packages (Windows only - requires Chocolatey to be installed)
+  chocolatey:
+    - chocolatey-core.extension
+
+# Dotfiles Management
+dotfiles:
+  # Enable yadm integration
+  enabled: true
+
+  # Dotfiles repository (change this to your own)
+  repository: ""
+
+  # Bootstrap script to run after yadm clone
+  bootstrap: true
+
+# SSH Configuration
+ssh:
+  # Generate SSH key if it doesn't exist
+  generate_key: true
+
+  # SSH key type
+  key_type: "ed25519"
+
+  # SSH key comment
+  key_comment: "{{ user.email }}"
+
+# Development Tools
+development:
+  # Enable development tools installation
+  enabled: true
+
+  # Programming languages to install
+  languages:
+    - python
+    - nodejs
+
+  # Additional development packages
+  packages:
+    windows:
+      - Microsoft.VisualStudio.2022.BuildTools
+      - Python.Python.3.12
+      - OpenJS.NodeJS
+
+    linux:
+      - python3
+      - python3-pip
+      - nodejs
+      - npm
+
+# System Configuration
+system:
+  # Timezone (leave empty to keep current)
+  timezone: ""
+
+  # Enable automatic updates
+  auto_updates: true
+
+  # Windows specific settings
+  windows:
+    # Enable Windows Subsystem for Linux
+    enable_wsl: false
+
+    # Windows features to enable
+    features: []
+
+    # Enable Windows Firewall
+    enable_firewall: true
+
+    # Disable telemetry
+    disable_telemetry: false
+
+    # Power plan (SCHEME_BALANCED, SCHEME_MAX_PERFORMANCE, SCHEME_POWER_SAVER)
+    power_plan: "SCHEME_BALANCED"
+
+    # Visual effects (1=best appearance, 2=best performance, 3=custom)
+    visual_effects: 2
+
+  # Linux specific settings
+  linux:
+    # Enable firewall (UFW)
+    enable_firewall: true
+
+    # Set swappiness (0-100)
+    swappiness: 10
+
+    # Enable fail2ban
+    enable_fail2ban: false
+
+    # System limits
+    limits:
+      - { type: "soft", item: "nofile", value: "65536" }
+      - { type: "hard", item: "nofile", value: "65536" }

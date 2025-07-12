@@ -1,0 +1,31 @@
+---
+# Global variables for all hosts
+ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+# Default configuration values
+defaults:
+  user:
+    name: "Default User"
+    email: "user@example.com"
+
+  git:
+    default_branch: "main"
+    push_default: "simple"
+    pull_rebase: true
+
+  theme:
+    dark_mode: true
+
+  packages:
+    common:
+      - git
+      - curl
+      - wget
+      - vim
+
+  dotfiles:
+    enabled: false
+
+  ssh:
+    generate_key: true
+    key_type: "ed25519"

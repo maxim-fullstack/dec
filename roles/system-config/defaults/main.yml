@@ -1,0 +1,20 @@
+---
+# System Configuration Role Defaults
+system:
+  timezone: ""
+  auto_updates: true
+
+  windows:
+    enable_wsl: false
+    features: []
+    enable_firewall: true
+    disable_telemetry: false
+    power_plan: "SCHEME_BALANCED"
+    visual_effects: 2
+    disable_defender: false
+
+  linux:
+    enable_firewall: true
+    swappiness: 10
+    enable_fail2ban: false
+    limits: []

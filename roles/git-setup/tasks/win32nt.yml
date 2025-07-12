@@ -1,0 +1,44 @@
+---
+# Git Setup Tasks for Windows
+- name: Ensure Git is installed (Windows)
+  win_command: "winget install Git.Git --accept-source-agreements --accept-package-agreements"
+  register: git_install_result
+  failed_when:
+    - git_install_result.rc != 0
+    - "'already installed' not in git_install_result.stdout"
+    - "'No applicable update found' not in git_install_result.stdout"
+  changed_when: "'Successfully installed' in git_install_result.stdout"
+  tags: [git-install]
+
+- name: Check if Git is available in PATH
+  win_command: git --version
+  register: git_version_check
+  ignore_errors: true
+  tags: [git-verify]
+
+- name: Display Git version
+  debug:
+    msg: "Git version: {{ git_version_check.stdout | trim }}"
+  when: git_version_check.rc == 0
+  tags: [git-verify]
+
+- name: Generate SSH key (Windows)
+  win_shell: |
+    $keyPath = "$env:USERPROFILE\.ssh\id_{{ ssh.key_type | default('ed25519') }}"
+    if (-not (Test-Path $keyPath)) {
+        ssh-keygen -t {{ ssh.key_type | default('ed25519') }} -f $keyPath -N '""' -C "{{ ssh.key_comment | default(git.user_email) }}"
+        Write-Output "SSH key generated"
+    } else {
+        Write-Output "SSH key already exists"
+    }
+  register: ssh_key_result
+  when: ssh.generate_key | default(true)
+  tags: [ssh-key]
+
+- name: Display SSH key generation result
+  debug:
+    msg: "{{ ssh_key_result.stdout }}"
+  when:
+    - ssh.generate_key | default(true)
+    - ssh_key_result is defined
+  tags: [ssh-key]

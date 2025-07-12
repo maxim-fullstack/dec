@@ -1,0 +1,65 @@
+---
+# Dotfiles Manager Role - Main Tasks
+- name: Check if yadm is available
+  command: which yadm
+  register: yadm_check
+  changed_when: false
+  failed_when: false
+  tags: [dotfiles, yadm-check]
+
+- name: Include platform-specific yadm installation
+  include_tasks: "{{ ansible_system | lower }}.yml"
+  when: yadm_check.rc != 0
+  tags: [dotfiles, yadm-install]
+
+- name: Initialize yadm repository if not already done
+  shell: |
+    if ! yadm status >/dev/null 2>&1; then
+      yadm init
+      echo "yadm repository initialized"
+    else
+      echo "yadm repository already exists"
+    fi
+  register: yadm_init_result
+  changed_when: "'initialized' in yadm_init_result.stdout"
+  when: dotfiles.enabled | default(false)
+  tags: [dotfiles, yadm-init]
+
+- name: Clone dotfiles repository
+  shell: |
+    if [ ! -z "{{ dotfiles.repository }}" ] && ! yadm remote get-url origin >/dev/null 2>&1; then
+      yadm clone {{ dotfiles.repository }}
+      echo "dotfiles repository cloned"
+    else
+      echo "dotfiles repository already configured or no repository specified"
+    fi
+  register: yadm_clone_result
+  changed_when: "'cloned' in yadm_clone_result.stdout"
+  when:
+    - dotfiles.enabled | default(false)
+    - dotfiles.repository is defined
+    - dotfiles.repository != ""
+  tags: [dotfiles, yadm-clone]
+
+- name: Run dotfiles bootstrap script
+  shell: |
+    if yadm list -a | grep -q ".config/yadm/bootstrap" && [ -x "$HOME/.config/yadm/bootstrap" ]; then
+      "$HOME/.config/yadm/bootstrap"
+      echo "bootstrap script executed"
+    else
+      echo "no bootstrap script found or not executable"
+    fi
+  register: bootstrap_result
+  changed_when: "'executed' in bootstrap_result.stdout"
+  when:
+    - dotfiles.enabled | default(false)
+    - dotfiles.bootstrap | default(false)
+  tags: [dotfiles, bootstrap]
+
+- name: Display dotfiles management status
+  debug:
+    msg:
+      - "Dotfiles management: {{ 'enabled' if dotfiles.enabled | default(false) else 'disabled' }}"
+      - "Repository: {{ dotfiles.repository | default('none') }}"
+      - "yadm status: {{ 'available' if yadm_check.rc == 0 else 'installed' }}"
+  tags: [dotfiles, status]

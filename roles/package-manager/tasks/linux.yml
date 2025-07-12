@@ -1,0 +1,82 @@
+---
+# Package Management Tasks for Linux
+- name: Update package cache (Debian/Ubuntu)
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_pkg_mgr == 'apt'
+  tags: [packages, cache-update]
+
+- name: Install common packages (Debian/Ubuntu)
+  apt:
+    name: "{{ packages.common | default([]) }}"
+    state: present
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - packages.common is defined
+    - packages.common | length > 0
+  tags: [packages, common]
+
+- name: Install Linux-specific packages (Debian/Ubuntu)
+  apt:
+    name: "{{ packages.linux | default([]) }}"
+    state: present
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - packages.linux is defined
+    - packages.linux | length > 0
+  tags: [packages, linux-specific]
+
+- name: Install development packages (Debian/Ubuntu)
+  apt:
+    name: "{{ development.packages.linux | default([]) }}"
+    state: present
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - development.enabled | default(false)
+    - development.packages.linux is defined
+    - development.packages.linux | length > 0
+  tags: [packages, development]
+
+- name: Install packages via dnf/yum (RHEL/CentOS/Fedora)
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ (packages.common | default([])) + (packages.linux | default([])) }}"
+  when:
+    - ansible_pkg_mgr in ['yum', 'dnf']
+    - item != ""
+  tags: [packages, rhel-family]
+
+- name: Install snap packages
+  snap:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages.snap | default([]) }}"
+  when:
+    - packages.snap is defined
+    - packages.snap | length > 0
+  ignore_errors: true
+  tags: [packages, snap]
+
+- name: Install flatpak packages
+  flatpak:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages.flatpak | default([]) }}"
+  when:
+    - packages.flatpak is defined
+    - packages.flatpak | length > 0
+  ignore_errors: true
+  tags: [packages, flatpak]
+
+- name: Display installed packages summary
+  debug:
+    msg:
+      - "Package installation completed for Linux"
+      - "Common packages: {{ packages.common | default([]) | length }}"
+      - "Linux packages: {{ packages.linux | default([]) | length }}"
+      - "Development packages: {{ development.packages.linux | default([]) | length if development.enabled | default(false) else 0 }}"
+      - "Snap packages: {{ packages.snap | default([]) | length }}"
+      - "Flatpak packages: {{ packages.flatpak | default([]) | length }}"
+  tags: [packages, summary]

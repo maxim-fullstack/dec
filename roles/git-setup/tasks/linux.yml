@@ -1,0 +1,40 @@
+---
+# Git Setup Tasks for Linux
+- name: Update package cache (Debian/Ubuntu)
+  apt:
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'
+  tags: [git-install]
+
+- name: Install Git (Debian/Ubuntu)
+  apt:
+    name: git
+    state: present
+  when: ansible_pkg_mgr == 'apt'
+  tags: [git-install]
+
+- name: Install Git (RHEL/CentOS/Fedora)
+  package:
+    name: git
+    state: present
+  when: ansible_pkg_mgr in ['yum', 'dnf']
+  tags: [git-install]
+
+- name: Verify Git installation
+  command: git --version
+  register: git_version
+  changed_when: false
+  tags: [git-verify]
+
+- name: Display Git version
+  debug:
+    msg: "Git version: {{ git_version.stdout }}"
+  tags: [git-verify]
+
+- name: Ensure .ssh directory exists
+  file:
+    path: "{{ ansible_user_dir }}/.ssh"
+    state: directory
+    mode: "0700"
+  when: ssh.generate_key | default(true)
+  tags: [ssh-key]

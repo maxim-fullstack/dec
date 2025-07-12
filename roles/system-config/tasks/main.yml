@@ -1,0 +1,13 @@
+---
+# System Configuration Role - Main Tasks
+- name: Include platform-specific system tasks
+  include_tasks: "{{ ansible_system | lower }}.yml"
+  tags: [system]
+
+- name: Display system configuration summary
+  debug:
+    msg:
+      - "Platform: {{ ansible_system }}"
+      - "Timezone: {{ system.timezone | default('current') }}"
+      - "Auto updates: {{ 'enabled' if system.auto_updates | default(true) else 'disabled' }}"
+  tags: [system, summary]

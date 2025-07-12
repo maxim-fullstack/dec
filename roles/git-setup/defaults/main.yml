@@ -1,0 +1,21 @@
+---
+# Git Setup Role Defaults
+git:
+  user_name: "{{ user.name | default('') }}"
+  user_email: "{{ user.email | default('') }}"
+  default_branch: "main"
+  push_default: "simple"
+  pull_rebase: false
+  aliases:
+    st: "status"
+    co: "checkout"
+    br: "branch"
+    ci: "commit"
+    lg: "log --oneline --graph --decorate --all"
+    last: "log -1 HEAD"
+    unstage: "reset HEAD --"
+
+ssh:
+  generate_key: true
+  key_type: "ed25519"
+  key_comment: "{{ git.user_email | default(user.email | default('')) }}"

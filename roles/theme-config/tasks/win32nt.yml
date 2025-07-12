@@ -1,0 +1,44 @@
+---
+# Theme Configuration Tasks for Windows
+- name: Set Windows to dark theme
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
+    name: AppsUseLightTheme
+    data: 0
+    type: dword
+  tags: [theme-apps]
+
+- name: Set Windows system to dark theme
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
+    name: SystemUsesLightTheme
+    data: 0
+    type: dword
+  tags: [theme-system]
+
+- name: Set Windows accent color
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
+    name: ColorPrevalence
+    data: 1
+    type: dword
+  when: theme.windows.accent_color is defined
+  tags: [theme-accent]
+
+- name: Configure Windows Terminal dark theme
+  win_shell: |
+    $settingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+    if (Test-Path $settingsPath) {
+        $settings = Get-Content $settingsPath | ConvertFrom-Json
+        if ($settings.profiles.defaults) {
+            $settings.profiles.defaults.colorScheme = "Campbell Powershell"
+        } else {
+            $settings.profiles | Add-Member -Type NoteProperty -Name defaults -Value @{colorScheme = "Campbell Powershell"}
+        }
+        $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath
+        Write-Output "Windows Terminal theme updated"
+    } else {
+        Write-Output "Windows Terminal settings not found"
+    }
+  ignore_errors: true
+  tags: [terminal-theme]

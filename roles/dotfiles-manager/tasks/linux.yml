@@ -1,0 +1,63 @@
+---
+# Dotfiles Manager Tasks for Linux
+- name: Update package cache (Debian/Ubuntu)
+  apt:
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'
+  tags: [dotfiles, yadm-install]
+
+- name: Install yadm (Debian/Ubuntu)
+  apt:
+    name: yadm
+    state: present
+  when: ansible_pkg_mgr == 'apt'
+  tags: [dotfiles, yadm-install]
+
+- name: Install yadm (RHEL/CentOS/Fedora via EPEL)
+  block:
+    - name: Install EPEL repository
+      package:
+        name: epel-release
+        state: present
+      when: ansible_distribution in ['RedHat', 'CentOS']
+
+    - name: Install yadm
+      package:
+        name: yadm
+        state: present
+  when: ansible_pkg_mgr in ['yum', 'dnf']
+  tags: [dotfiles, yadm-install]
+
+- name: Install yadm from source (fallback)
+  block:
+    - name: Create local bin directory
+      file:
+        path: "{{ ansible_user_dir }}/.local/bin"
+        state: directory
+        mode: "0755"
+
+    - name: Download yadm script
+      get_url:
+        url: https://github.com/TheLocehiliosan/yadm/raw/master/yadm
+        dest: "{{ ansible_user_dir }}/.local/bin/yadm"
+        mode: "0755"
+
+    - name: Add local bin to PATH
+      lineinfile:
+        path: "{{ ansible_user_dir }}/.bashrc"
+        line: 'export PATH="$HOME/.local/bin:$PATH"'
+        create: yes
+  when:
+    - ansible_pkg_mgr not in ['apt', 'yum', 'dnf']
+  tags: [dotfiles, yadm-install]
+
+- name: Verify yadm installation
+  command: yadm version
+  register: yadm_version
+  changed_when: false
+  tags: [dotfiles, yadm-verify]
+
+- name: Display yadm version
+  debug:
+    msg: "yadm version: {{ yadm_version.stdout }}"
+  tags: [dotfiles, yadm-verify]

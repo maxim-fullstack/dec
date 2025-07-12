@@ -1,0 +1,82 @@
+---
+# Main Ansible Playbook for DEC (Desired Environment Configuration)
+# This playbook orchestrates the complete workstation setup
+
+- name: DEC - Desired Environment Configuration
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  become: "{{ 'yes' if ansible_system != 'Win32NT' else 'no' }}"
+
+  vars_files:
+    - ../group_vars/all.yml
+
+  pre_tasks:
+    - name: Display platform information
+      debug:
+        msg:
+          - "Platform: {{ ansible_system }}"
+          - "Distribution: {{ ansible_distribution | default('N/A') }}"
+          - "Architecture: {{ ansible_architecture }}"
+          - "User: {{ ansible_user_id }}"
+      tags: always
+
+    - name: Validate required configuration
+      assert:
+        that:
+          - user.name is defined
+          - user.email is defined
+        fail_msg: "User name and email must be configured"
+      tags: always
+
+  roles:
+    - role: system-config
+      tags: [system, basic]
+
+    - role: package-manager
+      tags: [packages, basic]
+
+    - role: git-setup
+      tags: [git, basic]
+
+    - role: theme-config
+      tags: [theme, ui]
+
+    - role: dotfiles-manager
+      tags: [dotfiles, config]
+      when: dotfiles.enabled | default(false)
+
+  post_tasks:
+    - name: Check if reboot is required (Linux)
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+      when: ansible_system == 'Linux'
+      tags: always
+
+    - name: Check if reboot is required (Windows)
+      win_reboot_info:
+      register: reboot_info
+      when: ansible_system == 'Win32NT'
+      tags: always
+
+    - name: Configuration summary
+      debug:
+        msg:
+          - "DEC configuration completed successfully!"
+          - "Platform: {{ ansible_system }}"
+          - "Git configured for: {{ git.user_name }} <{{ git.user_email }}>"
+          - "Dark theme: {{ 'enabled' if theme.dark_mode else 'disabled' }}"
+          - "Dotfiles management: {{ 'enabled' if dotfiles.enabled | default(false) else 'disabled' }}"
+          - "Packages installed: {{ 'yes' if (packages.common | default([]) | length > 0) or (packages.windows | default([]) | length > 0) or (packages.linux | default([]) | length > 0) else 'no' }}"
+          - "Reboot required: {{ 'yes' if (reboot_required_file.stat.exists | default(false)) or (reboot_info.reboot_pending | default(false)) else 'no' }}"
+      tags: always
+
+    - name: Reboot recommendation
+      debug:
+        msg:
+          - "IMPORTANT: A system reboot is recommended to complete the configuration."
+          - "Please restart your system when convenient."
+      when:
+        - (reboot_required_file.stat.exists | default(false)) or (reboot_info.reboot_pending | default(false))
+      tags: always

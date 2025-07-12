@@ -1,0 +1,10 @@
+---
+# Dotfiles Manager Role Defaults
+dotfiles:
+  enabled: false
+  repository: ""
+  bootstrap: true
+
+yadm:
+  install_method: "auto" # auto, package, source
+  version: "latest"

@@ -1,0 +1,98 @@
+---
+# System Configuration Tasks for Windows
+- name: Set timezone
+  win_timezone:
+    timezone: "{{ system.timezone }}"
+  when:
+    - system.timezone is defined
+    - system.timezone != ""
+  tags: [system, timezone]
+
+- name: Configure Windows Update settings
+  win_regedit:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
+    name: "{{ item.name }}"
+    data: "{{ item.value }}"
+    type: dword
+  loop:
+    - {
+        name: "AUOptions",
+        value: "{{ 4 if system.auto_updates | default(true) else 1 }}",
+      }
+    - { name: "ScheduledInstallDay", value: 0 }
+    - { name: "ScheduledInstallTime", value: 3 }
+  when: system.auto_updates is defined
+  tags: [system, auto-updates]
+
+- name: Enable Windows Subsystem for Linux
+  win_optional_feature:
+    name: Microsoft-Windows-Subsystem-Linux
+    state: present
+  register: wsl_install
+  when: system.windows.enable_wsl | default(false)
+  tags: [system, wsl]
+
+- name: Enable Virtual Machine Platform for WSL2
+  win_optional_feature:
+    name: VirtualMachinePlatform
+    state: present
+  when: system.windows.enable_wsl | default(false)
+  tags: [system, wsl]
+
+- name: Enable Windows features
+  win_optional_feature:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ system.windows.features | default([]) }}"
+  when: system.windows.features is defined
+  tags: [system, windows-features]
+
+- name: Configure Windows Defender settings
+  win_regedit:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender
+    name: DisableAntiSpyware
+    data: "{{ 1 if system.windows.disable_defender | default(false) else 0 }}"
+    type: dword
+  when: system.windows.disable_defender is defined
+  tags: [system, defender]
+
+- name: Set performance options
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects
+    name: VisualFXSetting
+    data: "{{ system.windows.visual_effects | default(2) }}"
+    type: dword
+  when: system.windows.visual_effects is defined
+  tags: [system, performance]
+
+- name: Configure power settings
+  win_shell: |
+    powercfg /setactive "{{ system.windows.power_plan | default('SCHEME_BALANCED') }}"
+  when: system.windows.power_plan is defined
+  tags: [system, power]
+
+- name: Disable Windows telemetry
+  win_regedit:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
+    name: AllowTelemetry
+    data: 0
+    type: dword
+  when: system.windows.disable_telemetry | default(false)
+  tags: [system, privacy]
+
+- name: Configure Windows Firewall
+  win_firewall:
+    state: "{{ 'enabled' if system.windows.enable_firewall | default(true) else 'disabled' }}"
+    profiles: [Domain, Private, Public]
+  when: system.windows.enable_firewall is defined
+  tags: [system, firewall]
+
+- name: Display Windows system configuration
+  debug:
+    msg:
+      - "Timezone: {{ system.timezone | default('unchanged') }}"
+      - "Auto updates: {{ 'enabled' if system.auto_updates | default(true) else 'disabled' }}"
+      - "WSL: {{ 'enabled' if system.windows.enable_wsl | default(false) else 'disabled' }}"
+      - "Firewall: {{ 'enabled' if system.windows.enable_firewall | default(true) else 'disabled' }}"
+      - "Telemetry: {{ 'disabled' if system.windows.disable_telemetry | default(false) else 'enabled' }}"
+  tags: [system, status]

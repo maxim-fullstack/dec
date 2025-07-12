@@ -1,0 +1,113 @@
+---
+# Package Management Tasks for Windows
+- name: Install common packages via winget
+  win_shell: |
+    $package = "{{ item }}"
+    $result = winget list --id $package --exact 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Output "Package $package is already installed"
+        exit 0
+    } else {
+        Write-Output "Installing package $package"
+        winget install $package --accept-source-agreements --accept-package-agreements --silent
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "Successfully installed $package"
+        } else {
+            Write-Output "Failed to install $package"
+            exit 1
+        }
+    }
+  loop: "{{ packages.common | default([]) }}"
+  register: common_packages_result
+  failed_when:
+    - common_packages_result.rc != 0
+    - "'already installed' not in common_packages_result.stdout"
+  changed_when: "'Successfully installed' in common_packages_result.stdout"
+  when:
+    - packages.common is defined
+    - packages.common | length > 0
+  tags: [packages, common]
+
+- name: Install Windows-specific packages via winget
+  win_shell: |
+    $package = "{{ item }}"
+    $result = winget list --id $package --exact 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Output "Package $package is already installed"
+        exit 0
+    } else {
+        Write-Output "Installing package $package"
+        winget install $package --accept-source-agreements --accept-package-agreements --silent
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "Successfully installed $package"
+        } else {
+            Write-Output "Failed to install $package"
+            exit 1
+        }
+    }
+  loop: "{{ packages.windows | default([]) }}"
+  register: windows_packages_result
+  failed_when:
+    - windows_packages_result.rc != 0
+    - "'already installed' not in windows_packages_result.stdout"
+  changed_when: "'Successfully installed' in windows_packages_result.stdout"
+  when:
+    - packages.windows is defined
+    - packages.windows | length > 0
+  tags: [packages, windows-specific]
+
+- name: Install development packages via winget
+  win_shell: |
+    $package = "{{ item }}"
+    $result = winget list --id $package --exact 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Output "Package $package is already installed"
+        exit 0
+    } else {
+        Write-Output "Installing package $package"
+        winget install $package --accept-source-agreements --accept-package-agreements --silent
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "Successfully installed $package"
+        } else {
+            Write-Output "Failed to install $package"
+            exit 1
+        }
+    }
+  loop: "{{ development.packages.windows | default([]) }}"
+  register: dev_packages_result
+  failed_when:
+    - dev_packages_result.rc != 0
+    - "'already installed' not in dev_packages_result.stdout"
+  changed_when: "'Successfully installed' in dev_packages_result.stdout"
+  when:
+    - development.enabled | default(false)
+    - development.packages.windows is defined
+    - development.packages.windows | length > 0
+  tags: [packages, development]
+
+- name: Install Chocolatey packages (if chocolatey is available)
+  win_chocolatey:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages.chocolatey | default([]) }}"
+  when:
+    - packages.chocolatey is defined
+    - packages.chocolatey | length > 0
+  ignore_errors: true
+  tags: [packages, chocolatey]
+
+- name: Refresh environment variables
+  win_shell: |
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+    Write-Output "Environment variables refreshed"
+  tags: [packages, refresh-env]
+
+- name: Display installed packages summary
+  debug:
+    msg:
+      - "Package installation completed for Windows"
+      - "Common packages: {{ packages.common | default([]) | length }}"
+      - "Windows packages: {{ packages.windows | default([]) | length }}"
+      - "Development packages: {{ development.packages.windows | default([]) | length if development.enabled | default(false) else 0 }}"
+      - "Chocolatey packages: {{ packages.chocolatey | default([]) | length }}"
+  tags: [packages, summary]

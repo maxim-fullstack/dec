@@ -1,0 +1,16 @@
+---
+# Package Manager Role Defaults
+packages:
+  common: []
+  windows: []
+  linux: []
+  snap: []
+  flatpak: []
+  chocolatey: []
+
+development:
+  enabled: false
+  languages: []
+  packages:
+    windows: []
+    linux: []

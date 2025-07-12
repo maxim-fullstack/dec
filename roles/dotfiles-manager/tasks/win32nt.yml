@@ -1,0 +1,68 @@
+---
+# Dotfiles Manager Tasks for Windows
+- name: Check if Git for Windows is installed
+  win_shell: |
+    try {
+        $gitVersion = git --version
+        Write-Output "Git is available: $gitVersion"
+        exit 0
+    } catch {
+        Write-Output "Git is not available"
+        exit 1
+    }
+  register: git_check
+  failed_when: false
+  changed_when: false
+  tags: [dotfiles, git-check]
+
+- name: Install Git for Windows if not present
+  win_shell: |
+    winget install Git.Git --accept-source-agreements --accept-package-agreements
+  when: git_check.rc != 0
+  tags: [dotfiles, git-install]
+
+- name: Create yadm directory
+  win_file:
+    path: "{{ ansible_user_dir }}/.local/bin"
+    state: directory
+  tags: [dotfiles, yadm-install]
+
+- name: Download yadm script for Windows
+  win_get_url:
+    url: https://github.com/TheLocehiliosan/yadm/raw/master/yadm
+    dest: "{{ ansible_user_dir }}/.local/bin/yadm"
+  tags: [dotfiles, yadm-install]
+
+- name: Create yadm wrapper batch file
+  win_copy:
+    dest: "{{ ansible_user_dir }}/.local/bin/yadm.cmd"
+    content: |
+      @echo off
+      bash "{{ ansible_user_dir | replace('\\', '/') }}/.local/bin/yadm" %*
+  tags: [dotfiles, yadm-install]
+
+- name: Add yadm to PATH
+  win_path:
+    elements:
+      - "{{ ansible_user_dir }}\\.local\\bin"
+    scope: user
+  tags: [dotfiles, yadm-install]
+
+- name: Verify yadm installation
+  win_shell: |
+    try {
+        $yadmVersion = & "{{ ansible_user_dir }}/.local/bin/yadm.cmd" version
+        Write-Output "yadm version: $yadmVersion"
+        exit 0
+    } catch {
+        Write-Output "yadm verification failed: $_"
+        exit 1
+    }
+  register: yadm_version_check
+  tags: [dotfiles, yadm-verify]
+
+- name: Display yadm installation status
+  debug:
+    msg: "{{ yadm_version_check.stdout }}"
+  when: yadm_version_check.rc == 0
+  tags: [dotfiles, yadm-verify]

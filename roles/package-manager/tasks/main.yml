@@ -1,0 +1,14 @@
+---
+# Package Management Role - Main Tasks
+- name: Include platform-specific package tasks
+  include_tasks: "{{ ansible_system | lower }}.yml"
+  tags: [packages]
+
+- name: Display package management summary
+  debug:
+    msg:
+      - "Platform: {{ ansible_system }}"
+      - "Package manager: {{ 'winget' if ansible_system == 'Win32NT' else ansible_pkg_mgr | default('unknown') }}"
+      - "Common packages: {{ packages.common | default([]) | length }} items"
+      - "Platform packages: {{ (packages.windows if ansible_system == 'Win32NT' else packages.linux) | default([]) | length }} items"
+  tags: [packages, summary]
