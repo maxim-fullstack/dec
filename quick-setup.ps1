@@ -30,18 +30,65 @@ if (-not (Test-Path "config.yml")) {
 }
 
 # Check Ansible installation
-try {
-    $ansibleVersion = ansible --version 2>&1
+Write-ColorOutput "Checking Ansible installation..." "Yellow"
+
+# Function to find Ansible executable
+function Find-AnsibleExecutable {
+    $ansiblePaths = @(
+        "ansible",
+        "$env:LOCALAPPDATA\Programs\Python\Python312\Scripts\ansible.exe",
+        "$env:LOCALAPPDATA\Programs\Python\Python311\Scripts\ansible.exe",
+        "$env:LOCALAPPDATA\Programs\Python\Python310\Scripts\ansible.exe"
+    )
+    
+    foreach ($path in $ansiblePaths) {
+        try {
+            $version = & $path --version 2>&1
+            if ($version -match "ansible \[core") {
+                return $path
+            }
+        }
+        catch {
+            continue
+        }
+    }
+    return $null
+}
+
+$ansibleExe = Find-AnsibleExecutable
+if ($ansibleExe) {
+    $ansibleVersion = & $ansibleExe --version 2>&1
     Write-ColorOutput "Ansible found: $($ansibleVersion.Split("`n")[0])" "Green"
 }
-catch {
+else {
     Write-ColorOutput "Installing Ansible..." "Yellow"
     try {
-        pip install ansible
-        Write-ColorOutput "Ansible installed successfully." "Green"
+        # Try different pip commands
+        $pipCommands = @("pip", "pip3", "python -m pip", "python3 -m pip")
+        $installed = $false
+        
+        foreach ($pipCmd in $pipCommands) {
+            try {
+                Invoke-Expression "$pipCmd install ansible"
+                $installed = $true
+                break
+            }
+            catch {
+                continue
+            }
+        }
+        
+        if ($installed) {
+            Write-ColorOutput "Ansible installed successfully." "Green"
+        }
+        else {
+            throw "All pip installation methods failed"
+        }
     }
     catch {
-        Write-ColorOutput "Please install Ansible manually" "Red"
+        Write-ColorOutput "Please install Ansible manually:" "Red"
+        Write-ColorOutput "1. Install Python from https://python.org" "Yellow"
+        Write-ColorOutput "2. Run: pip install ansible" "Yellow"
         exit 1
     }
 }

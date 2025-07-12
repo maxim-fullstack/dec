@@ -245,6 +245,23 @@ roles/my-role/
 
 ## 🐛 Troubleshooting
 
+### Python Installation Issues (Windows)
+
+If you encounter "Python was not found" errors, use the fix script:
+
+```powershell
+# Run the Python fix script
+.\fix-python.ps1
+
+# Or use the batch file if PowerShell is restricted
+.\fix-python.bat
+```
+
+**Manual Python Installation:**
+1. Download Python from [python.org](https://python.org)
+2. During installation, check "Add Python to PATH"
+3. Restart your terminal and try again
+
 ### Common Issues
 
 **Windows: Execution Policy Error**
@@ -252,20 +269,30 @@ roles/my-role/
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+**Windows: Python App Execution Aliases**
+If you see "run without arguments to install from the Microsoft Store":
+1. Open Settings → Apps → Advanced app settings → App execution aliases
+2. Turn off app execution aliases for Python
+3. Or run `.\fix-python.ps1` to do this automatically
+
 **Linux: Permission Denied**
 ```bash
 chmod +x setup.sh
 sudo ./setup.sh
 ```
 
-**Ansible Not Found**
+**Ansible Not Found After Installation**
 ```bash
 # Linux
 pip3 install --user ansible
+export PATH=$PATH:~/.local/bin
 
-# Windows
-pip install ansible
+# Windows - restart your terminal and try:
+python -m pip install ansible
 ```
+
+**Winget Not Available**
+On older Windows systems, install winget from the Microsoft Store or GitHub releases.
 
 ### Debug Mode
 
