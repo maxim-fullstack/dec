@@ -81,19 +81,6 @@ packages:
     - firefox
     - code
 
-  # Snap packages (Linux only)
-  snap:
-    - discord
-    - slack
-
-  # Flatpak packages (Linux only)
-  flatpak:
-    - org.mozilla.firefox
-
-  # Chocolatey packages (Windows only - requires Chocolatey to be installed)
-  chocolatey:
-    - chocolatey-core.extension
-
 # Dotfiles Management
 dotfiles:
   # Enable yadm integration

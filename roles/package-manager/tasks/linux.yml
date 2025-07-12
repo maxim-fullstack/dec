@@ -48,28 +48,6 @@
     - item != ""
   tags: [packages, rhel-family]
 
-- name: Install snap packages
-  snap:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ packages.snap | default([]) }}"
-  when:
-    - packages.snap is defined
-    - packages.snap | length > 0
-  ignore_errors: true
-  tags: [packages, snap]
-
-- name: Install flatpak packages
-  flatpak:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ packages.flatpak | default([]) }}"
-  when:
-    - packages.flatpak is defined
-    - packages.flatpak | length > 0
-  ignore_errors: true
-  tags: [packages, flatpak]
-
 - name: Display installed packages summary
   debug:
     msg:
@@ -77,6 +55,4 @@
       - "Common packages: {{ packages.common | default([]) | length }}"
       - "Linux packages: {{ packages.linux | default([]) | length }}"
       - "Development packages: {{ development.packages.linux | default([]) | length if development.enabled | default(false) else 0 }}"
-      - "Snap packages: {{ packages.snap | default([]) | length }}"
-      - "Flatpak packages: {{ packages.flatpak | default([]) | length }}"
   tags: [packages, summary]

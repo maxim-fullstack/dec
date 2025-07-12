@@ -4,9 +4,6 @@ packages:
   common: []
   windows: []
   linux: []
-  snap: []
-  flatpak: []
-  chocolatey: []
 
 development:
   enabled: false

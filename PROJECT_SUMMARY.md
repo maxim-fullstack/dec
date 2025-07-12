@@ -36,8 +36,8 @@ This project provides a comprehensive Ansible-based solution for cross-platform 
 ### 🔧 Key Features Implemented
 
 #### Platform-Specific Package Management
-- **Windows**: winget (primary), Chocolatey (optional)
-- **Linux**: apt, snap, flatpak support
+- **Windows**: winget
+- **Linux**: apt
 - Intelligent package detection and installation
 
 #### Comprehensive Git Setup

@@ -105,8 +105,8 @@ DEC/
 ## 🎯 Features
 
 ### ✅ Cross-Platform Package Management
-- **Windows**: winget (primary), Chocolatey (optional)
-- **Linux**: apt, snap, flatpak support
+- **Windows**: winget
+- **Linux**: apt
 
 ### ✅ Git Setup
 - Automatic Git installation

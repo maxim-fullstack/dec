@@ -85,17 +85,6 @@
     - development.packages.windows | length > 0
   tags: [packages, development]
 
-- name: Install Chocolatey packages (if chocolatey is available)
-  win_chocolatey:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ packages.chocolatey | default([]) }}"
-  when:
-    - packages.chocolatey is defined
-    - packages.chocolatey | length > 0
-  ignore_errors: true
-  tags: [packages, chocolatey]
-
 - name: Refresh environment variables
   win_shell: |
     $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
@@ -109,5 +98,4 @@
       - "Common packages: {{ packages.common | default([]) | length }}"
       - "Windows packages: {{ packages.windows | default([]) | length }}"
       - "Development packages: {{ development.packages.windows | default([]) | length if development.enabled | default(false) else 0 }}"
-      - "Chocolatey packages: {{ packages.chocolatey | default([]) | length }}"
   tags: [packages, summary]
