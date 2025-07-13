@@ -81,20 +81,20 @@ resources:
       id: "DevToys-app.DevToys"
       source: "winget"
 
-  - name: InstallWindowsPerformanceAnalyzer
-    type: Microsoft.WinGet/Package
-    metadata:
-      description: "Install Microsoft.WindowsPerformanceAnalyzer"
-    properties:
-      id: "Microsoft.WindowsPerformanceAnalyzer"
-      source: "winget"
+  # - name: InstallWindowsPerformanceAnalyzer
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install Microsoft Windows Performance Analyzer"
+  #   properties:
+  #     id: "9N0W1B2BXGNZ"
+  #     source: "winget"
 
-  - name: InstallSysinternals
+  - name: InstallSysinternalsSuite
     type: Microsoft.WinGet/Package
     metadata:
-      description: "Install Microsoft.Sysinternals"
+      description: "Install Microsoft.Sysinternals.Suite"
     properties:
-      id: "Microsoft.Sysinternals"
+      id: "Microsoft.Sysinternals.Suite"
       source: "winget"
 
   # ====================================

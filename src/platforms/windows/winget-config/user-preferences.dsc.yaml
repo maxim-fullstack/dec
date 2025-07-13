@@ -25,3 +25,19 @@ resources:
       AppColorMode: "Dark"
       DeveloperMode: true
       TaskbarAlignment: "Left"
+
+  # ====================================
+  # TASKBAR CONFIGURATION
+  # ====================================
+  - name: EnableTaskbarAutoHide
+    type: Microsoft.DSC.Transitional/RunCommandOnSet
+    metadata:
+      description: "Enable Taskbar Auto-Hide functionality"
+      winget:
+        securityContext: "current"
+    properties:
+      executable: "powershell"
+      arguments:
+        - "-NoProfile"
+        - "-Command"
+        - "$registryPath = 'HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StuckRects3'; $currentSettings = Get-ItemProperty -Path $registryPath -Name 'Settings' -ErrorAction SilentlyContinue; if ($currentSettings) { $settings = $currentSettings.Settings; $settings[8] = $settings[8] -bor 0x01; Set-ItemProperty -Path $registryPath -Name 'Settings' -Value $settings; Stop-Process -Name explorer -Force; Start-Sleep -Seconds 2; }"

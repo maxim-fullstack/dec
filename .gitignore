@@ -1,0 +1,166 @@
+# DEC (Desired Environment Configuration) - GitIgnore
+# Cross-platform toolkit for replicating complete system environments
+
+# ========================
+# General Development
+# ========================
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Cache directories
+.cache/
+cache/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.code-workspace
+.vs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ========================
+# PowerShell Specific
+# ========================
+
+# PowerShell execution policies and profiles (if accidentally added)
+Microsoft.PowerShell_profile.ps1
+profile.ps1
+
+# PowerShell transcript files
+PowerShell_transcript*.txt
+
+# PowerShell module build artifacts
+*.psm1.bak
+*.psd1.bak
+
+# PowerShell debugging
+*.pssession
+
+# PowerShell DSC
+*.mof
+*.mof.checksum
+
+# PowerShell package management
+packages/
+.nuget/
+
+# ========================
+# Bash/Shell Specific
+# ========================
+
+# Shell history
+.bash_history
+.zsh_history
+.sh_history
+
+# Shell temporary files
+.bash_sessions/
+
+# Compiled shell scripts (if any)
+*.o
+*.so
+*.dylib
+
+# ========================
+# Configuration & Secrets
+# ========================
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+*.secrets
+secrets.*
+
+# Personal configuration overrides
+config.local.*
+*.personal.*
+
+# API keys and tokens
+*token*
+*key*
+*secret*
+!example.*
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ========================
+# Build & Distribution
+# ========================
+
+# Build outputs
+build/
+dist/
+out/
+target/
+
+# Package files
+*.zip
+*.tar.gz
+*.7z
+*.rar
+
+# ========================
+# Testing & Development
+# ========================
+
+# Test results
+test-results/
+coverage/
+*.coverage
+
+# Debugging
+debug.log
+debug/
+
+# Development databases
+*.db
+
+# ========================
+# Platform Specific Artifacts
+# ========================
+
+# Windows
+$RECYCLE.BIN/
+*.lnk
+*.url
+
+# Linux/Unix
+.nfs*
+
+# ========================
+# Project Specific
+# ========================
+
+# Configuration backups created by DEC
+*.config.backup
+*.conf.backup
+
+# Temporary configuration files
+temp-config.*
