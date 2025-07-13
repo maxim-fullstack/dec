@@ -1,0 +1,27 @@
+# DEC User Preferences Configuration
+# This configuration handles Windows UI and user experience settings
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC User Preferences"
+  description: "Windows UI and Developer preferences configuration"
+  winget:
+    processor:
+      identifier: "dscv3"
+
+resources:
+  # ====================================
+  # WINDOWS SETTINGS CONFIGURATION
+  # ====================================
+  - name: ConfigureWindowsSettings
+    type: Microsoft.Windows.Settings/WindowsSettings
+    metadata:
+      description: "Configure Windows UI and Developer settings"
+      winget:
+        securityContext: "elevated"
+    properties:
+      SystemColorMode: "Dark"
+      AppColorMode: "Dark"
+      DeveloperMode: true
+      TaskbarAlignment: "Left"

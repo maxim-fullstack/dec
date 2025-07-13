@@ -1,0 +1,60 @@
+# DEC Prerequisites Configuration
+# This configuration handles WinGet setup and core PowerShell modules
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC Prerequisites"
+  description: "WinGet configuration and PowerShell module prerequisites"
+  winget:
+    processor:
+      identifier: "dscv3"
+
+resources:
+  # ====================================
+  # WINGET CONFIGURATION
+  # ====================================
+  - name: WinGetUserSettingsFile
+    type: Microsoft.WinGet/UserSettingsFile
+    properties:
+      settings: {}
+
+  - name: WinGetAdminSettings
+    type: Microsoft.WinGet/AdminSettings
+    metadata:
+      winget:
+        securityContext: "elevated"
+    properties:
+      settings:
+        LocalManifestFiles: false
+        ProxyCommandLineOptions: false
+        BypassCertificatePinningForMicrosoftStore: false
+        InstallerHashOverride: false
+        LocalArchiveMalwareScanOverride: false
+
+  # ====================================
+  # INSTALL MICROSOFT.WINDOWS.SETTINGS MODULE
+  # ====================================
+  - name: Microsoft.WinGet/Package_PowerShell
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Microsoft.PowerShell"
+    properties:
+      id: "Microsoft.PowerShell"
+      source: "winget"
+
+  - name: Microsoft.DSC.Transitional/RunCommandOnSet_WindowsSettings
+    type: Microsoft.DSC.Transitional/RunCommandOnSet
+    metadata:
+      description: "Install Module Microsoft.Windows.Settings"
+    dependsOn:
+      - Microsoft.WinGet/Package_PowerShell
+    properties:
+      arguments:
+        - "-NoProfile"
+        - "-NoLogo"
+        - "-Command"
+        - "if (-not (Get-Module -ListAvailable -Name Microsoft.Windows.Settings)) { Install-Module
+          -Name Microsoft.Windows.Settings -Confirm:$False -Force -AllowPrerelease -AllowClobber
+          }"
+      executable: "pwsh"

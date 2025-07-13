@@ -1,0 +1,31 @@
+# DEC Language Tools Configuration
+# This configuration handles language-specific development tools
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC Language Tools"
+  description: "Language-specific development tools and runtimes"
+  winget:
+    processor:
+      identifier: "dscv3"
+
+resources:
+  # ====================================
+  # NODE.JS & JAVASCRIPT TOOLS
+  # ====================================
+  - name: InstallNVMforWindows
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install CoreyButler.NVMforWindows"
+    properties:
+      id: "CoreyButler.NVMforWindows"
+      source: "winget"
+
+  # - name: InstallPnpm
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install pnpm.pnpm"
+  #   properties:
+  #     id: "pnpm.pnpm"
+  #     source: "winget"

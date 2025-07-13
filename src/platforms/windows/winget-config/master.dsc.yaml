@@ -1,0 +1,24 @@
+# DEC Master Configuration
+# This is the main configuration file that orchestrates all components
+# Run this to execute the complete DEC setup
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC Master Configuration"
+  description: "Complete Desired Environment Configuration for Windows development setup"
+  winget:
+    processor:
+      identifier: "dscv3"
+
+# To use this master configuration, run each component in order:
+# 1. winget configure .\prerequisites.dsc.yaml
+# 2. winget configure .\user-preferences.dsc.yaml  
+# 3. winget configure .\base-tools.dsc.yaml
+# 4. winget configure .\developer-tools.dsc.yaml
+# 5. winget configure .\language-tools.dsc.yaml
+
+# Alternatively, you can run them individually based on your needs.
+# Each file is self-contained and can be executed independently.
+
+resources: []

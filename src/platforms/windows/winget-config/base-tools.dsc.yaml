@@ -1,0 +1,117 @@
+# DEC Base Tools Configuration
+# This configuration handles essential system utilities and productivity tools
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  name: "DEC Base Tools"
+  description: "Essential system utilities and productivity applications"
+  winget:
+    processor:
+      identifier: "dscv3"
+
+resources:
+  # ====================================
+  # PRODUCTIVITY & OFFICE TOOLS
+  # ====================================
+  - name: Install7Zip
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install 7zip.7zip"
+    properties:
+      id: "7zip.7zip"
+      source: "winget"
+
+  - name: InstallNotepadPlusPlus
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Notepad++.Notepad++"
+    properties:
+      id: "Notepad++.Notepad++"
+      source: "winget"
+
+  # - name: InstallGrammarlyForWindows
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install Grammarly.ForWindows"
+  #   properties:
+  #     id: "Grammarly.ForWindows"
+  #     source: "winget"
+
+  # - name: InstallObsidian
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install Obsidian.Obsidian"
+  #   properties:
+  #     id: "Obsidian.Obsidian"
+  #     source: "winget"
+
+  # - name: InstallMicrosoftStickyNotes
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install Microsoft.StickyNotes"
+  #   properties:
+  #     id: "Microsoft.StickyNotes"
+  #     source: "winget"
+
+  # - name: InstallDrawIO
+  #   type: Microsoft.WinGet/Package
+  #   metadata:
+  #     description: "Install JGraph.Draw"
+  #   properties:
+  #     id: "JGraph.Draw"
+  #     source: "winget"
+
+  # ====================================
+  # SYSTEM UTILITIES & TOOLS
+  # ====================================
+  - name: InstallPowerToys
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Microsoft.PowerToys"
+    properties:
+      id: "Microsoft.PowerToys"
+      source: "winget"
+
+  - name: InstallDevToys
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install DevToys-app.DevToys"
+    properties:
+      id: "DevToys-app.DevToys"
+      source: "winget"
+
+  - name: InstallWindowsPerformanceAnalyzer
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Microsoft.WindowsPerformanceAnalyzer"
+    properties:
+      id: "Microsoft.WindowsPerformanceAnalyzer"
+      source: "winget"
+
+  - name: InstallSysinternals
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Microsoft.Sysinternals"
+    properties:
+      id: "Microsoft.Sysinternals"
+      source: "winget"
+
+  # ====================================
+  # TERMINAL & SHELL ENHANCEMENT
+  # ====================================
+  - name: InstallOhMyPosh
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install JanDeDobbeleer.OhMyPosh"
+    properties:
+      id: "JanDeDobbeleer.OhMyPosh"
+      source: "winget"
+
+  - name: InstallWarpTerminal
+    type: Microsoft.WinGet/Package
+    metadata:
+      description: "Install Warp.Warp"
+    properties:
+      id: "Warp.Warp"
+      source: "winget"
